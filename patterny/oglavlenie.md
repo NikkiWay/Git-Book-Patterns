@@ -16,7 +16,7 @@ layout:
 
 ## [Порождающие паттерны](oglavlenie.md#porozhdayushie-patterny)
 
-1. [Фабричный метод (Factory Method)](porozhdayushie-patterny/fabrichnyi-metod.md)
+1. [Фабричный метод (Factory Method)](porozhdayushie-patterny/factory-method.md)
 2. [Фабрика (Factory)](porozhdayushie-patterny/fabrika.md)
 3. [Абстрактная фабрика (Abstract Factory)](porozhdayushie-patterny/abstraktnaya-fabrika.md)
 4. [Прототип (Prototype)](porozhdayushie-patterny/prototip.md)

@@ -6,7 +6,7 @@
 
 * [Оглавление](patterny/oglavlenie.md)
 * [Порождающие паттерны](patterny/porozhdayushie-patterny/README.md)
-  * [Фабричный метод](patterny/porozhdayushie-patterny/fabrichnyi-metod.md)
+  * [Фабричный метод](patterny/porozhdayushie-patterny/factory-method.md)
   * [Фабрика](patterny/porozhdayushie-patterny/fabrika.md)
   * [Абстрактная фабрика](patterny/porozhdayushie-patterny/abstraktnaya-fabrika.md)
   * [Прототип](patterny/porozhdayushie-patterny/prototip.md)
