@@ -10,7 +10,7 @@
   * [Фабрика](patterns/creationals-patterns/factory.md)
   * [Абстрактная фабрика](patterns/creationals-patterns/abstract-factory.md)
   * [Прототип](patterns/creationals-patterns/prototype.md)
-  * [Строитель](patterns/creationals-patterns/stroitel.md)
+  * [Строитель](patterns/creationals-patterns/builder.md)
   * [Одиночка](patterns/creationals-patterns/singleton.md)
   * [Пулл объектов](patterns/creationals-patterns/object-pull.md)
 * [Структурные паттерны](patterns/structural-patterns/README.md)
