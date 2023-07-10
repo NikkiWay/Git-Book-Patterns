@@ -16,12 +16,8 @@ layout:
 
 ## [Порождающие паттерны](oglavlenie.md#porozhdayushie-patterny)
 
-1. [Фабричный метод](porozhdayushie-patterny/fabrichnyi-metod.md)
-2. [Абстрактная фабрика](porozhdayushie-patterny/abstraktnaya-fabrika.md)
-3. [Прототип](porozhdayushie-patterny/prototip.md)
-4. [Строитель](porozhdayushie-patterny/stroitel.md)
-5. [Одиночка](porozhdayushie-patterny/odinochka.md)
 6. [Пулл объектов](porozhdayushie-patterny/pull-obektov.md)
+
 
 ## [Структурные паттерны](oglavlenie.md#strukturnye-patterny)
 
