@@ -20,7 +20,7 @@ layout:
 2. [Фабрика (Factory)](creationals-patterns/factory.md)
 3. [Абстрактная фабрика (Abstract Factory)](creationals-patterns/abstract-factory.md)
 4. [Прототип (Prototype)](creationals-patterns/prototype.md)
-5. [Строитель (Builder)](creationals-patterns/stroitel.md)
+5. [Строитель (Builder)](creationals-patterns/builder.md)
 6. [Одиночка (Singleton)](creationals-patterns/singleton.md)
 7. [Пулл объектов (Objects pull)](creationals-patterns/object-pull.md)
 
