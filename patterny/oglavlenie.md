@@ -16,8 +16,13 @@ layout:
 
 ## [Порождающие паттерны](oglavlenie.md#porozhdayushie-patterny)
 
-6. [Пулл объектов](porozhdayushie-patterny/pull-obektov.md)
-
+1. [Фабричный метод](porozhdayushie-patterny/fabrichnyi-metod.md)
+2. [Фабрика](porozhdayushie-patterny/fabrika.md)
+3. [Абстрактная фабрика](porozhdayushie-patterny/abstraktnaya-fabrika.md)
+4. [Прототип](porozhdayushie-patterny/prototip.md)
+5. [Строитель](porozhdayushie-patterny/stroitel.md)
+6. [Одиночка](porozhdayushie-patterny/odinochka.md)
+7. [Пулл объектов](porozhdayushie-patterny/pull-obektov.md)
 
 ## [Структурные паттерны](oglavlenie.md#strukturnye-patterny)
 
@@ -41,4 +46,3 @@ layout:
 9. [Хранитель](povedencheskie-patterny/khranitel.md)
 10. [Итератор](povedencheskie-patterny/iterator.md)
 11. [Свойство](povedencheskie-patterny/svoistvo.md)
-
