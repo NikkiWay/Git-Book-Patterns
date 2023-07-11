@@ -26,7 +26,7 @@ layout:
 
 ## [Структурные паттерны](oglavlenie.md#strukturnye-patterny)
 
-1. [Адаптер (Adapter)](structural-patterns/adapter.md)
+1. [Адаптер (Adapter)](structural-patterns/adapter/)
 2. [Декоратор (Decorator)](structural-patterns/dekorator.md)
 3. [Компоновщик (Composite)](structural-patterns/composite.md)
 4. [Мост (Bridge)](structural-patterns/bridge.md)
@@ -39,7 +39,7 @@ layout:
 2. [Команда (Command)](behavioral-patterns/command.md)
 3. [Цепочка обязанностей (Chain of responsibility )](behavioral-patterns/chain-of-responsibility.md)
 4. [Подписчик-издатель (Publisher-follower)](behavioral-patterns/follower-publisher.md)
-5. [Посредник (Mediator)](broken-reference)
+5. [Посредник (Mediator)](broken-reference/)
 6. [Посетитель (Visitor)](behavioral-patterns/visitor.md)
 7. [Шаблонный метод (Template method)](behavioral-patterns/tamplate-method.md)
 8. [Хранитель (Memento)](behavioral-patterns/memento.md)
