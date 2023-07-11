@@ -16,7 +16,7 @@ layout:
 
 ## Назначение
 
-Фабричный метод (Factory method) - пораждающий шаблон проектирования, определяющий общий интерфейс создания объектов в родительском классе и позволяющий изменять создаваемые объекты в дочерних классах. Шаблон позволяет классу делегировать создание объектов подклассам. Используется когда заранее неизвестны типы и зависимости объектов, с которыми должен работать код. При его использовании код очищается от создания конкретных объектов(от оператора new).&#x20;
+Фабричный метод (Factory method) - пораждающий шаблон проектирования, определяющий общий интерфейс создания объектов в родительском классе и позволяющий изменять создаваемые объекты в дочерних классах. Шаблон позволяет классу делегировать создание объектов подклассам. Используется когда заранее неизвестны типы и зависимости объектов, с которыми должен работать код. При его использовании код очищается от создания конкретных объектов(от оператора new).
 
 ## Решаемые задачи
 
@@ -32,9 +32,9 @@ layout:
 
 Появляется возможность легко подменить один объект другим.
 
-* Отсутствие повторного создания&#x20;
+* Повторное использование объектов
 
-Используется один объект в разных местах программы.
+Повторное использование одних и тех же объектов, которые были созданы разных местах программы.
 
 ## Общая реализация на языке с++
 
@@ -42,6 +42,7 @@ layout:
 Класс Solution предоставляет метод для регистрации в данном случае Creator'ов для карты (map), состоящий из пар (pair): ключ + значение.
 {% endhint %}
 
+{% code lineNumbers="true" %}
 ```cpp
 # include <iostream> 
 # include <memory> 
@@ -54,6 +55,7 @@ class Creator
 {
 public:
       virtual ~Creator() = 0;
+      
       virtual unique_ptr<Product> createProduct() = 0;
 };
 Creator::~Creator() = default;
@@ -71,6 +73,7 @@ class Product
 {
 public:
       virtual ~Product() = 0;
+      
       virtual void run() = 0;
 };
  
@@ -79,13 +82,17 @@ Product::~Product() {}
 class ConProd1 : public Product
 {
 public:
-      virtual ~ConProd1() override { cout << "Destructor;" << endl; }
-      virtual void run() override { cout << "Method run;" << endl; }
-}; 
-unique_ptr<Creator> createConCreator()
-{
-      return unique_ptr<Creator>(new ConCreator<ConProd1>());
-}
+      virtual ~ConProd1() override 
+      { cout << "Destructor;" << endl; }
+      
+      virtual void run() override 
+      { cout << "Method run;" << endl; }
+      
+unique_ptr<Creator> createConcreteCreator()
+      {
+      return unique_ptr<Creator>(new ConcreteCreator<ConcreteProd1>());
+      }
+};
  
 class Solution
 {
@@ -96,7 +103,9 @@ public:
       {
             return callbacks.insert(CallBackMap::value_type(id, createfun)).second;
       }
-      bool check(size_t id) { return callbacks.erase(id) == 1; }
+      
+      bool check(size_t id) 
+      { return callbacks.erase(id) == 1; }
  
       unique_ptr<Creator> create(size_t id)
       {
@@ -110,21 +119,22 @@ public:
       }
 private:
       using CallBackMap = map<size_t, CreateCreator>;
+      
       CallBackMap callbacks;
 };
  
 int main()
 {
       Solution solution;
-      solution.registration(1, createConCreator);
+      solution.registration(1, createConcreteCreator);
       shared_ptr<Creator> cr(solution.create(1));
       shared_ptr<Product> ptr = cr->createProduct();
       ptr->run();
 }
 ```
+{% endcode %}
 
 ## Связь с другими паттернами
 
 * Фабричный метод может быть использован внутри [Абстрактной фабрики](abstract-factory.md) для создания конкретных объектов. Вместо того, чтобы создавать объекты напрямую, Абстрактная фабрика может использовать Фабричный метод для создания экземпляров объектов определенного типа.
 * Фабричный метод может быть использован для создания [прототипов](prototype.md) объектов вместо создания новых объектов с помощью конструктора. Вместо создания объекта с нуля, Фабричный метод может использовать существующий объект-прототип и его клонирование для создания новых экземпляров. Это позволяет избежать накладных расходов на создание объектов с нуля и обеспечивает гибкость при создании новых объектов на основе существующих.
-
