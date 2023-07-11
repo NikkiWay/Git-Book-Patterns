@@ -69,14 +69,16 @@ public:
 class ConAdaptee : public BaseAdaptee
 {
 public:
-    virtual void specificRequest() override { cout << "Method ConAdaptee;" << endl; }
+    virtual void specificRequest() override 
+    { 
+        cout << "Method ConAdaptee;" << endl; 
+    }
 };
 
 class Adapter
 {
 public:
     virtual ~Adapter() = default;
-
     virtual void request() = 0;
 };
 
@@ -87,7 +89,6 @@ private:
 
 public:
     ConAdapter(shared_ptr<BaseAdaptee> ad) : adaptee(ad) {}
-
     virtual void request() override;
 };
 
@@ -95,7 +96,6 @@ public:
 void ConAdapter::request()
 {
     cout << "Adapter: ";
-
     if (adaptee)
     {
         adaptee->specificRequest();
@@ -133,21 +133,22 @@ class BaseAdaptee
 {
 public:
     virtual ~BaseAdaptee() = default;
-
     virtual void specificRequest() = 0;
 };
 
 class ConAdaptee : public BaseAdaptee
 {
 public:
-    virtual void specificRequest() override { cout << "Method ConAdaptee;" << endl; }
+    virtual void specificRequest() override 
+    { 
+        cout << "Method ConAdaptee;" << endl; 
+    }
 };
 
 class Adapter
 {
 public:
     virtual ~Adapter() = default;
-
     virtual void request() = 0;
 };
 
@@ -155,10 +156,8 @@ class ConAdapter : public Adapter
 {
 private:
     shared_ptr<BaseAdaptee>  adaptee;
-
 public:
     ConAdapter(shared_ptr<BaseAdaptee> ad) : adaptee(ad) {}
-
     virtual void request() override;
 };
 
@@ -166,7 +165,6 @@ public:
 void ConAdapter::request()
 {
     cout << "Adapter: ";
-
     if (adaptee)
     {
         adaptee->specificRequest();
@@ -203,7 +201,6 @@ class Interface
 {
 public:
     virtual ~Interface() = default;
-
     virtual void request() = 0;
 };
 
@@ -215,7 +212,10 @@ public:
 
     Adapter(shared_ptr<Type> o, MethodPtr m) : object(o), method(m) {}
 
-    void request() override { ((*object).*method)(); }
+    void request() override 
+    { 
+    ((*object).*method)(); 
+    }
 
 private:
     shared_ptr<Type> object;
@@ -225,23 +225,33 @@ private:
 class AdapteeA
 {
 public:
-    ~AdapteeA() { cout << "Destructor class AdapteeA;" << endl; }
-
-    void specRequestA() { cout << "Method AdapteeA::specRequestA;" << endl; }
+    ~AdapteeA() 
+    { 
+        cout << "Destructor class AdapteeA;" << endl; 
+    }
+    void specRequestA() 
+    { 
+        cout << "Method AdapteeA::specRequestA;" << endl; 
+    }
 };
 
 class AdapteeB
 {
 public:
-    ~AdapteeB() { cout << "Destructor class AdapteeB;" << endl; }
-
-    void specRequestB() { cout << "Method AdapteeB::specRequestB;" << endl; }
+    ~AdapteeB() 
+    { 
+        cout << "Destructor class AdapteeB;" << endl; 
+    }
+    void specRequestB() 
+    { 
+        cout << "Method AdapteeB::specRequestB;" << endl; 
+    }
 };
 
 auto initialize()
 {
     using InterPtr = shared_ptr<Interface>;
-
+    
     vector<InterPtr> vec{
         make_shared<Adapter<AdapteeA>>(make_shared<AdapteeA>(), &AdapteeA::specRequestA),
         make_shared<Adapter<AdapteeB>>(make_shared<AdapteeB>(), &AdapteeB::specRequestB)
@@ -262,13 +272,6 @@ int main()
 {% endtab %}
 {% endtabs %}
 
-## Связь с другими паттернами
-
-* [Мост](bridge.md): структура паттерна мост аналогична структуре адаптера, но у моста иное назначение. Он отделяет интерфейс от реализации, чтобы то и другое можно было изменять независимо. Адаптер же призван изменить интерфейс существующего объекта.
-* [Фасад](facade.md): адаптер может использоваться внутри фасада для обеспечения совместимости между подсистемами, имеющими несовместимые интерфейсы.
-* [Заместитель](proxy.md): адаптер может служить в качестве простого заместителя для объекта, предоставляя тот же интерфейс, но с другой реализацией.
-* [Декоратор](dekorator.md): оба паттерна имеют сходную структуру, но разные цели. Адаптер изменяет интерфейс объекта, в то время как декоратор расширяет функциональность объекта, не изменяя его интерфейса
-
 ## Достоинства
 
 * отделяет и скрывает от клиента подробности преобразования различных интерфейсов
@@ -283,3 +286,10 @@ int main()
 * Дублирование кода (в различных конкретных адаптерах может требоваться одна и та же реализация методов)
 * Различные сущности с одной базой могут работать с данными, с которыми адаптер может не уметь работать. Возникает поребность переносить зависимости на один уровень ниже
 * Часто адаптер должен иметь доступ к реализации класса
+
+## Связь с другими паттернами
+
+* [Мост](bridge.md): структура паттерна мост аналогична структуре адаптера, но у моста иное назначение. Он отделяет интерфейс от реализации, чтобы то и другое можно было изменять независимо. Адаптер же призван изменить интерфейс существующего объекта.
+* [Фасад](facade.md): адаптер может использоваться внутри фасада для обеспечения совместимости между подсистемами, имеющими несовместимые интерфейсы.
+* [Заместитель](proxy.md): адаптер может служить в качестве простого заместителя для объекта, предоставляя тот же интерфейс, но с другой реализацией.
+* [Декоратор](dekorator.md): оба паттерна имеют сходную структуру, но разные цели. Адаптер изменяет интерфейс объекта, в то время как декоратор расширяет функциональность объекта, не изменяя его интерфейса
