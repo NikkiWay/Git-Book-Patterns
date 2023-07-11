@@ -1,6 +1,7 @@
 # Table of contents
 
-* [Паттерны](README.md)
+* [Добро пожаловать!](README.md)
+* [Введение в паттерны](intro.md)
 
 ## Паттерны <a href="#patterns" id="patterns"></a>
 
