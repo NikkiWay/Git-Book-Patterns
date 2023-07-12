@@ -25,7 +25,7 @@ layout:
 
 ## [Структурные паттерны](oglavlenie.md#strukturnye-patterny)
 
-1. [Адаптер (Adapter)](structural-patterns/adapter.md)
+1. [Адаптер (Adapter)](structural-patterns/adapter/)
 2. [Декоратор (Decorator)](structural-patterns/dekorator.md)
 3. [Компоновщик (Composite)](structural-patterns/composite.md)
 4. [Мост (Bridge)](structural-patterns/bridge.md)
