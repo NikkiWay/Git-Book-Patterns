@@ -17,12 +17,11 @@ layout:
 ## [Порождающие паттерны](oglavlenie.md#porozhdayushie-patterny)
 
 1. [Фабричный метод (Factory Method)](creationals-patterns/factory-method.md)
-2. [Фабрика (Factory)](creationals-patterns/factory.md)
-3. [Абстрактная фабрика (Abstract Factory)](creationals-patterns/abstract-factory.md)
-4. [Прототип (Prototype)](creationals-patterns/prototype.md)
-5. [Строитель (Builder)](creationals-patterns/builder.md)
-6. [Одиночка (Singleton)](creationals-patterns/singleton.md)
-7. [Пулл объектов (Objects pull)](creationals-patterns/object-pull.md)
+2. [Абстрактная фабрика (Abstract Factory)](creationals-patterns/abstract-factory.md)
+3. [Прототип (Prototype)](creationals-patterns/prototype.md)
+4. [Строитель (Builder)](creationals-patterns/builder.md)
+5. [Одиночка (Singleton)](creationals-patterns/singleton.md)
+6. [Пулл объектов (Objects pull)](creationals-patterns/object-pull.md)
 
 ## [Структурные паттерны](oglavlenie.md#strukturnye-patterny)
 
@@ -39,7 +38,7 @@ layout:
 2. [Команда (Command)](behavioral-patterns/command.md)
 3. [Цепочка обязанностей (Chain of responsibility )](behavioral-patterns/chain-of-responsibility.md)
 4. [Подписчик-издатель (Publisher-follower)](behavioral-patterns/follower-publisher.md)
-5. [Посредник (Mediator)](broken-reference)
+5. [Посредник (Mediator)](broken-reference/)
 6. [Посетитель (Visitor)](behavioral-patterns/visitor.md)
 7. [Шаблонный метод (Template method)](behavioral-patterns/tamplate-method.md)
 8. [Хранитель (Memento)](behavioral-patterns/memento.md)
