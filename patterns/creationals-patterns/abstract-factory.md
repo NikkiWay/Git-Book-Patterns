@@ -54,6 +54,7 @@ BaseGraphics::~BaseGraphics() {}
 {% endtab %}
 
 {% tab title="AbstractGraphFactory" %}
+{% code fullWidth="true" %}
 ```cpp
 class AbstractGraphFactory
 {
@@ -68,6 +69,7 @@ public:
 {% endtab %}
 
 {% tab title="QtGraphFactory" %}
+{% code fullWidth="true" %}
 ```cpp
 class QtGraphFactory : public AbstractGraphFactory
 {
@@ -91,30 +93,35 @@ class QtGraphFactory : public AbstractGraphFactory
 {% endtab %}
 
 {% tab title="BasePen" %}
+{% code fullWidth="true" %}
 ```cpp
 class BasePen {};
 ```
 {% endtab %}
 
 {% tab title="BaseBrush" %}
+{% code fullWidth="true" %}
 ```cpp
 class BaseBrush {};
 ```
 {% endtab %}
 
 {% tab title="QtPen" %}
+{% code fullWidth="true" %}
 ```cpp
 class QtPen : public BasePen {};
 ```
 {% endtab %}
 
 {% tab title="QtBrush" %}
+{% code fullWidth="true" %}
 ```cpp
 class QtBrush : public BaseBrush {};
 ```
 {% endtab %}
 
 {% tab title="Image" %}
+{% code fullWidth="true" %}
 ```cpp
 class Image {};
 
@@ -122,12 +129,14 @@ class Image {};
 {% endtab %}
 
 {% tab title="Color" %}
+{% code fullWidth="true" %}
 ```cpp
 class Color {};
 ```
 {% endtab %}
 
 {% tab title="main" %}
+{% code fullWidth="true" %}
 ```cpp
 int main()
 {
@@ -141,6 +150,7 @@ int main()
 {% endtabs %}
 
 {% code lineNumbers="true" %}
+{% code fullWidth="true" %}
 ```cpp
 # include <iostream>
 # include <memory>
