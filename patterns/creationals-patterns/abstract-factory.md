@@ -66,6 +66,7 @@ public:
     virtual unique_ptr<BaseBrush> createBrush(shared_ptr<Color> cl) = 0;
 };
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="QtGraphFactory" %}
@@ -90,42 +91,35 @@ class QtGraphFactory : public AbstractGraphFactory
     }
 };
 ```
+{% endcode %}
 {% endtab %}
 
-{% tab title="BasePen" %}
+{% tab title="Pen" %}
 {% code fullWidth="true" %}
 ```cpp
 class BasePen {};
+
+class QtPen : public BasePen {};
 ```
+{% endcode %}
 {% endtab %}
 
-{% tab title="BaseBrush" %}
+{% tab title="Brush" %}
 {% code fullWidth="true" %}
 ```cpp
 class BaseBrush {};
-```
-{% endtab %}
 
-{% tab title="QtPen" %}
-{% code fullWidth="true" %}
-```cpp
-class QtPen : public BasePen {};
-```
-{% endtab %}
-
-{% tab title="QtBrush" %}
-{% code fullWidth="true" %}
-```cpp
 class QtBrush : public BaseBrush {};
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Image" %}
 {% code fullWidth="true" %}
 ```cpp
 class Image {};
-
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Color" %}
@@ -133,23 +127,10 @@ class Image {};
 ```cpp
 class Color {};
 ```
-{% endtab %}
-
-{% tab title="main" %}
-{% code fullWidth="true" %}
-```cpp
-int main()
-{
-    shared_ptr<AbstractGraphFactory> graphfactory = make_shared<QtGraphFactory>();
-    shared_ptr<Image> image = make_shared<Image>();
-    shared_ptr<BaseGraphics> graphics1 = grfactory->createGraphics(image);
-    shared_ptr<BaseGraphics> graphics2 = grfactory->createGraphics(image);
-}
-```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 
-{% code lineNumbers="true" %}
 {% code fullWidth="true" %}
 ```cpp
 # include <iostream>
