@@ -16,7 +16,7 @@
   * [Пулл объектов](patterns/creationals-patterns/object-pull.md)
 * [Структурные паттерны](patterns/structural-patterns/README.md)
   * [Адаптер](patterns/structural-patterns/adapter/README.md)
-    * [Возможные реализации для решения конкретных задач](patterns/structural-patterns/adapter/adapter-concrete-implementation.md.md)
+    * [Возможные реализации для решения конкретных задач](patterns/structural-patterns/adapter/adapter-concrete-implementation.md)
   * [Декоратор](patterns/structural-patterns/dekorator.md)
   * [Компоновщик](patterns/structural-patterns/composite.md)
   * [Мост](patterns/structural-patterns/bridge.md)
