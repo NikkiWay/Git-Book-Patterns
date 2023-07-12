@@ -38,38 +38,9 @@ layout:
 
 ## Общая реализация на языке с++
 
-{% hint style="info" %}
-Класс Solution предоставляет метод для регистрации в данном случае Creator'ов для карты (map), состоящий из пар (pair): ключ + значение.
-{% endhint %}
-
-{% code lineNumbers="true" %}
+{% tabs %}
+{% tab title="Product" %}
 ```cpp
-# include <iostream> 
-# include <memory> 
-# include <map> 
-using namespace std; 
-
-class Product;
-
-class Creator
-{
-public:
-      virtual ~Creator() = 0;
-      
-      virtual unique_ptr<Product> createProduct() = 0;
-};
-
-Creator::~Creator() = default;
- 
-template <typename Tprod>
-class ConCreator : public Creator
-{
-public:
-      virtual unique_ptr<Product> createProduct() override
-      {
-            return unique_ptr<Product>(new Tprod());
-      }
-};  
 class Product
 {
 public:
@@ -79,22 +50,66 @@ public:
 };
  
 Product::~Product() {}
- 
-class ConProd1 : public Product
+```
+{% endtab %}
+
+{% tab title="Creator" %}
+```cpp
+class Creator
 {
 public:
-      virtual ~ConProd1() override 
-      { cout << "Destructor;" << endl; }
+      virtual ~Creator() = 0;
+      
+      virtual unique_ptr<Product> createProduct() = 0;
+};
+
+Creator::~Creator() = default;
+```
+{% endtab %}
+
+{% tab title="ConcreteCreator" %}
+```cpp
+template <typename Tprod>
+class ConcreteCreator : public Creator
+{
+public:
+      virtual unique_ptr<Product> createProduct() override
+      {
+            return unique_ptr<Product>(new Tprod());
+      }
+};  
+```
+{% endtab %}
+
+{% tab title="ConcreteProduct1" %}
+```cpp
+class ConcreteProduct1 : public Product
+{
+public:
+      virtual ~ConcreteProduct1() override 
+      {
+            cout << "Destructor;" << endl; 
+      }
       
       virtual void run() override 
-      { cout << "Method run;" << endl; }
+      { 
+            cout << "Method run;" << endl;
+      }
       
       unique_ptr<Creator> createConcreteCreator()
       {
-            return unique_ptr<Creator>(new ConcreteCreator<ConcreteProd1>());
+            return unique_ptr<Creator>(new ConcreteCreator<ConcreteProduct1>());
       }
 };
- 
+```
+{% endtab %}
+
+{% tab title="Solution" %}
+{% hint style="info" %}
+Класс Solution предоставляет метод для регистрации в данном случае Creator'ов для карты (map), состоящий из пар (pair): ключ + значение.
+{% endhint %}
+
+```cpp
 class Solution
 {
 public:
@@ -123,7 +138,18 @@ private:
       
       CallBackMap callbacks;
 };
- 
+```
+{% endtab %}
+{% endtabs %}
+
+{% code lineNumbers="true" %}
+```cpp
+# include <iostream> 
+# include <memory> 
+# include <map> 
+
+using namespace std; 
+
 int main()
 {
       Solution solution;
@@ -145,7 +171,7 @@ int main()
 1. Избавляение от необходимости создания конкретного объекта в коде.
 2. Создание объектов в одном место упрощает поддержку и изменение кода.
 3. Возможность во время выполнения программы принимать решение, какой объект создавать.
-4. Возможность во время выполнения программы подменять создание одного объекта на  другой.
+4. Возможность во время выполнения программы подменять создание одного объекта на другой.
 5. Упрощается добавление новых классов без изменения написанного кода.
 
 ## Недостатки
