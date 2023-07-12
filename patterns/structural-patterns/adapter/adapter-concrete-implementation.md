@@ -4,6 +4,8 @@ description: Adapter
 
 # Возможные реализации для решения конкретных задач
 
+## Шаблонный адаптер
+
 {% tabs %}
 {% tab title="includes" %}
 {% code lineNumbers="true" fullWidth="true" %}
