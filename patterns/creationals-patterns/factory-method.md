@@ -36,6 +36,7 @@ layout:
 
 {% tabs %}
 {% tab title="Product" %}
+{% code fullWidth="true" %}
 ```cpp
 class Product
 {
@@ -47,9 +48,11 @@ public:
  
 Product::~Product() {}
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Creator" %}
+{% code fullWidth="true" %}
 ```cpp
 class Creator
 {
@@ -61,9 +64,11 @@ public:
 
 Creator::~Creator() = default;
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="ConcreteCreator" %}
+{% code fullWidth="true" %}
 ```cpp
 template <typename Tprod>
 class ConcreteCreator : public Creator
@@ -75,9 +80,11 @@ public:
       }
 };  
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="ConcreteProduct1" %}
+{% code fullWidth="true" %}
 ```cpp
 class ConcreteProduct1 : public Product
 {
@@ -98,6 +105,7 @@ public:
       }
 };
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Solution" %}
@@ -105,6 +113,7 @@ public:
 Класс Solution предоставляет метод для регистрации в данном случае Creator'ов для карты (map), состоящий из пар (pair): ключ + значение.
 {% endhint %}
 
+{% code fullWidth="true" %}
 ```cpp
 class Solution
 {
@@ -117,8 +126,10 @@ public:
       }
       
       bool check(size_t id) 
-      { return callbacks.erase(id) == 1; }
- 
+      { 
+            return callbacks.erase(id) == 1; 
+      }
+
       unique_ptr<Creator> create(size_t id)
       {
             CallBackMap::const_iterator it = callbacks.find(id);
@@ -135,10 +146,11 @@ private:
       CallBackMap callbacks;
 };
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 
-{% code lineNumbers="true" %}
+{% code lineNumbers="true" fullWidth="true" %}
 ```cpp
 # include <iostream> 
 # include <memory> 
@@ -160,7 +172,7 @@ int main()
 ## Преимущества
 
 1. Избавляение от необходимости создания конкретного объекта в коде.
-2. Создание объектов в одном место упрощает поддержку и изменение кода.
+2. Создание объектов в одном месте упрощает поддержку и изменение кода.
 3. Возможность во время выполнения программы принимать решение, какой объект создавать.
 4. Возможность во время выполнения программы подменять создание одного объекта на другой.
 5. Упрощается добавление новых классов без изменения написанного кода.
@@ -168,7 +180,7 @@ int main()
 ## Недостатки
 
 1. Увеличение количества кода за счёт появления параллельных иерархий классов, усложнение разработки и проектирования.
-2. Увеличение времени компиляции исполнения.
+2. Увеличение времени компиляции и исполнения.
 3. Необходимость перекомплиировать один и тот же код при добавлении новых типов объектов.
 
 ## Связь с другими паттернами
