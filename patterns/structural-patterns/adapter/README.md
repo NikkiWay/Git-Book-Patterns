@@ -48,43 +48,83 @@ layout:
 {% endhint %}
 
 {% hint style="info" %}
-При использовании адаптера расширение может относиться не к одному классу ,а к целой иерархии классов.
+При использовании адаптера расширение может относиться не к одному классу, а к целой иерархии классов.
 {% endhint %}
 
 ## Общая реализация на языке С++
 
 {% tabs %}
-{% tab title="Adapter на С++" %}
+{% tab title="includes" %}
 {% code lineNumbers="true" fullWidth="true" %}
 ```cpp
+// подключаем нужные для работы программы библиотеки
 # include <iostream>
 # include <memory>
 
+// подключаем пространство имен std
 using namespace std;
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="BaseAdaptee" %}
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
+// класс BaseAdaptee является базовым описанием интерфейса, 
+// который нуждается в адаптации
+ 
 class BaseAdaptee
 {
 public:
     virtual ~BaseAdaptee() = default;
-
     virtual void specificRequest() = 0;
 };
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="ConcreteAdaptee" %}
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
+// класс ConcreteAdaptee определяет существующий интерфейс, 
+// который нуждается в адаптации
 
 class ConcreteAdaptee : public BaseAdaptee
 {
 public:
     virtual void specificRequest() override 
     { 
-        cout << "Method ConAdaptee;" << endl; 
+        cout << "Method ConcreteAdaptee;" << endl; 
     }
 };
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="Adapter" %}
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
+// Adapter адаптирует интерфейс Adaptee к зависящему от 
+// предметной области интерфейсу, которым пользуется Client
+
+// Client - класс, который вступает во взаимоотношения с объектами, 
+// удовлетворяющими интерфейсу
+ 
 class Adapter
 {
 public:
     virtual ~Adapter() = default;
     virtual void request() = 0;
 };
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="ConcreteAdapter" %}
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
+// конкретная реализация экзмпляра BaseAdapter
+// ConcreteAdapter адаптирует интерфейс BaseAdaptee к интерфейсу системы
 
 class ConcreteAdapter : public Adapter
 {
@@ -93,7 +133,7 @@ private:
 
 public:
     ConcreteAdapter(shared_ptr<BaseAdaptee> ad) : adaptee(ad) {}
-    virtual void request() override;
+    void request() override;
 };
 
 # pragma region Methods
@@ -109,9 +149,14 @@ void ConcreteAdapter::request()
         cout << "Empty!" << endl;
     }
 }
-
 # pragma endregion
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="main" %}
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
 int main()
 {
     shared_ptr<BaseAdaptee> adaptee = make_shared<ConcreteAdaptee>();
