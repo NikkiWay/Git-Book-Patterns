@@ -5,7 +5,7 @@ description: Adapter
 # Возможные реализации для решения конкретных задач
 
 {% tabs %}
-{% tab title="Шаблон Adapter" %}
+{% tab title="includes" %}
 {% code lineNumbers="true" fullWidth="true" %}
 ```cpp
 # include <iostream>
@@ -13,14 +13,26 @@ description: Adapter
 # include <vector>
 
 using namespace std;
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="class Interface" %}
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
 class Interface
 {
 public:
     virtual ~Interface() = default;
     virtual void request() = 0;
 };
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="class Adapter" %}
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
 template <typename Type>
 class Adapter : public Interface
 {
@@ -38,7 +50,13 @@ private:
     shared_ptr<Type> object;
     MethodPtr method;
 };
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="class AdapteeA" %}
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
 class AdapteeA
 {
 public:
@@ -51,7 +69,13 @@ public:
         cout << "Method AdapteeA::specRequestA;" << endl; 
     }
 };
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="class AdapteeB" %}
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
 class AdapteeB
 {
 public:
@@ -64,7 +88,13 @@ public:
         cout << "Method AdapteeB::specRequestB;" << endl; 
     }
 };
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="initialize()" %}
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
 auto initialize()
 {
     using InterPtr = shared_ptr<Interface>;
@@ -76,7 +106,13 @@ auto initialize()
 
     return vec;
 }
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
+{% code lineNumbers="true" fullWidth="true" %}
+```cpp
 int main()
 {
     auto v = initialize();
@@ -86,5 +122,3 @@ int main()
 }
 ```
 {% endcode %}
-{% endtab %}
-{% endtabs %}
