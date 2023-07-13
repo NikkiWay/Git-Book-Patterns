@@ -21,6 +21,7 @@
   * [Мост](patterns/structural-patterns/bridge.md)
   * [Заместитель](patterns/structural-patterns/proxy.md)
   * [Фасад](patterns/structural-patterns/facade.md)
+  * [Приспособленец](patterns/structural-patterns/prisposoblenec.md)
 * [Поведенческие паттерны](patterns/behavioral-patterns/README.md)
   * [Стратегия](patterns/behavioral-patterns/strategy.md)
   * [Команда](patterns/behavioral-patterns/command.md)
