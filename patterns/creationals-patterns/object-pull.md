@@ -42,6 +42,7 @@ class Product
 {
 private:
     static size_t count;
+    
 public:
     Product() 
     { 
