@@ -6,13 +6,12 @@ description: Facade
 
 ## Назначение
 
-Фасад предоставляет унифицированный интерфейс вместо набора интерфейсов некоторой подсистемы. Он определяет интерфейс более высокого уровня, который упрощает использование подсистемы.
+Паттерн фасад относится к структурным шаблонам проектирования и предоставляет унифицированный интерфейс вместо набора интерфейсов некоторой подсистемы. Он определяет интерфейс более высокого уровня, который упрощает использование подсистемы.
 
 ## Решаемые задачи
 
 * предоставление простого интерфейса к сложной подсистеме
-* повышение степени независимости и переносимости подсистем: фасад позволяет отделять подсистему как от клиентов, так и от других подсистем
-* разложение подсистемы на отдельные слои: использование  фасада для определения точки входа на каждый уровень подсистемы
+* ослабление связей между компонентами системы
 
 ## Общая реализация на языке С++
 
@@ -22,9 +21,7 @@ description: Facade
 {% tab title="Scanner" %}
 {% code lineNumbers="true" fullWidth="true" %}
 ```cpp
-// класс, входящий в подсистему компиляции 
-
-class Scanner 
+ class Scanner 
 {
 public:
     Scanner(istream&);
@@ -40,9 +37,7 @@ private:
 {% tab title="Parser" %}
 {% code lineNumbers="true" fullWidth="true" %}
 ```cpp
-// класс, входящий в подсистему компиляции 
-
-class Parser 
+ class Parser 
 {
 public:
     Parser();
@@ -56,8 +51,6 @@ public:
 {% tab title="ProgramNodeBuilder" %}
 {% code lineNumbers="true" fullWidth="true" %}
 ```cpp
-// класс, входящий в подсистему компиляции 
-
 class ProgramNodeBuilder 
 {
 public:
@@ -66,7 +59,6 @@ public:
     virtual ProgramNode* NewAssignment(ProgramNode* variable, ProgramNode* expression) const;
     virtual ProgramNode* NewReturnStatement(ProgramNode* value) const;
     virtual ProgramNode* NewCondition(ProgramNode* condition,ProgramNode* truePart, ProgramNode* falsePart) const;
-    // ...
     ProgramNode* GetRootNode();
 private:
     ProgramNode* _node;
@@ -78,18 +70,12 @@ private:
 {% tab title="ProgramNode" %}
 {% code lineNumbers="true" fullWidth="true" %}
 ```cpp
-// класс, входящий в подсистему компиляции 
-
 class ProgramNode
 {
 public:
-    // манипулирование узлом программы
     virtual void GetSourcePosition(int& line, int& index);
-    // ...
-    // манипулирование потомками
     virtual void Add(ProgramNode*);
     virtual void Remove(ProgramNode*);
-    // ...
     virtual void Traverse(CodeGenerator&);
 protected:
     ProgramNode();
@@ -101,15 +87,12 @@ protected:
 {% tab title="CodeGenerator " %}
 {% code lineNumbers="true" fullWidth="true" %}
 ```cpp
-// класс, входящий в подсистему компиляции 
-
 class CodeGenerator 
 {
 public:
     virtual void Visit(StatementNode*);
     virtual void Visit(ExpressionNode*);
-    // ...
-    protected:
+protected:
     CodeGenerator(BytecodeStream&);
 protected:
     BytecodeStream& _output;
@@ -152,13 +135,13 @@ void Compiler::Compile (istream& input, BytecodeStream& output)
 
 ## Недостатки
 
-* увеличение сложности и сопровождаемости фасада&#x20;
+* увеличение сложности и сопровождаемости фасада
 
-Если подсистема имеет большое количество компонентов или сложную структуру, фасад рискует стать сложным, перегруженным объектом, привязанным ко всем классам программы(God- object)
+Если подсистема имеет большое количество компонентов или сложную структуру, фасад рискует стать сложным, перегруженным объектом, что приведет к укреплению связей между компонентами вместо их ослабления.&#x20;
 
 ## Связь с другими паттернами
 
-* [Абстрактная фабрика](../creationals-patterns/abstract-factory.md): паттерн абстрактная фабрика допустимо использовать вместе с фасадом, чтобы предоставить интерфейс для создания объектов подсистем способом, не зависимым от этих подсистем. Абстрактная фабрика может выступать и как альтернатива фасаду, чтобы скрыть платформенно-зависимые классы.
+* [Абстрактная фабрика](../creationals-patterns/abstract-factory.md): допустимо использовать вместе с фасадом, чтобы предоставить интерфейс для создания объектов подсистем способом, не зависимым от этих подсистем. Абстрактная фабрика может выступать и как альтернатива фасаду, чтобы скрыть платформенно-зависимые классы.
 * [Посредник](../behavioral-patterns/opekun.md): аналогичен фасаду в том смысле, что абстрагирует функциональность существующих классов.
 * [Одиночка](../creationals-patterns/singleton.md): обычно требуется только один фасад. Поэтому объекты фасадов часто бывают одиночками.
 * [Подписчик-издатель](../behavioral-patterns/follower-publisher.md): фасад может применять паттерн наблюдатель для уведомления клиентов о событиях, происходящих в подсистеме.
