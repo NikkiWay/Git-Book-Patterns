@@ -30,6 +30,7 @@
   * [Посредник](patterns/behavioral-patterns/opekun.md)
   * [Посетитель](patterns/behavioral-patterns/visitor.md)
   * [Шаблонный метод](patterns/behavioral-patterns/tamplate-method.md)
-  * [Хранитель](patterns/behavioral-patterns/memento.md)
+  * [Опекун](patterns/behavioral-patterns/opekun-1.md)
   * [Итератор](patterns/behavioral-patterns/iterator.md)
   * [Свойство](patterns/behavioral-patterns/property.md)
+  * [Хранитель](patterns/behavioral-patterns/memento.md)
