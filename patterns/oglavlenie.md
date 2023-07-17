@@ -39,7 +39,7 @@ layout:
 3. [Цепочка обязанностей (Chain of responsibility )](behavioral-patterns/chain-of-responsibility.md)
 4. [Подписчик-издатель (Publisher-follower)](behavioral-patterns/follower-publisher.md)
 5. [Посредник (Mediator)](broken-reference/)
-6. [Посетитель (Visitor)](behavioral-patterns/visitor.md)
+6. [Посетитель (Visitor)](behavioral-patterns/visitor/)
 7. [Шаблонный метод (Template method)](behavioral-patterns/tamplate-method.md)
 8. [Хранитель (Memento)](behavioral-patterns/memento.md)
 9. [Итератор (Iterator)](behavioral-patterns/iterator.md)
