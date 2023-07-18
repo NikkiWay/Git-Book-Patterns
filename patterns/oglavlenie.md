@@ -43,4 +43,4 @@ layout:
 7. [Шаблонный метод (Template method)](behavioral-patterns/tamplate-method.md)
 8. [Хранитель (Memento)](behavioral-patterns/memento.md)
 9. [Итератор (Iterator)](behavioral-patterns/iterator.md)
-10. [Свойство (Property)](behavioral-patterns/property.md)
+10. [Свойство (Property)](behavioral-patterns/property/)
