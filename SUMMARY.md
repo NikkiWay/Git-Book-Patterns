@@ -29,7 +29,7 @@
   * [Подписчик-издатель](patterns/behavioral-patterns/follower-publisher.md)
   * [Посетитель](patterns/behavioral-patterns/visitor/README.md)
     * [Возможные реализации для решения конкретных задач](patterns/behavioral-patterns/visitor/visitor-concrete-implementation.md)
-  * [Посредник](patterns/behavioral-patterns/posrednik.md)
+  * [Посредник](patterns/behavioral-patterns/opekun.md)
   * [Шаблонный метод](patterns/behavioral-patterns/tamplate-method.md)
   * [Хранитель](patterns/behavioral-patterns/memento.md)
   * [Итератор](patterns/behavioral-patterns/iterator.md)
