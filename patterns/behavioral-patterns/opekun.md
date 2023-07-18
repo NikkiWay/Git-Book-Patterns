@@ -174,7 +174,7 @@ using namespace std;
 
 int main()
 {
-	shared_ptr<Mediator> mediator =make_shared<ConMediator>();
+	shared_ptr<Mediator> mediator = make_shared<ConcreteMediator>();
 
 	shared_ptr<Colleague> col1 = make_shared<ColleagueLeft>();
 	shared_ptr<Colleague> col2 = make_shared<ColleagueRight>();
