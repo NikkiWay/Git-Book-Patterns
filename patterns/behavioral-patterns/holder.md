@@ -1,6 +1,0 @@
----
-description: Holder
----
-
-# Хранитель
-

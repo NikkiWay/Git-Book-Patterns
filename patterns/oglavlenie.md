@@ -44,4 +44,3 @@ layout:
 8. [Опекун (Memento)](behavioral-patterns/memento.md)
 9. [Итератор (Iterator)](behavioral-patterns/iterator.md)
 10. [Свойство (Property)](behavioral-patterns/property.md)
-11. [Хранитель (Holder)](behavioral-patterns/holder.md)

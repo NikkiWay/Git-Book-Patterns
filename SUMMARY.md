@@ -33,4 +33,3 @@
   * [Опекун](patterns/behavioral-patterns/memento.md)
   * [Итератор](patterns/behavioral-patterns/iterator.md)
   * [Свойство](patterns/behavioral-patterns/property.md)
-  * [Хранитель](patterns/behavioral-patterns/holder.md)
