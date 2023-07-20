@@ -41,6 +41,6 @@ layout:
 5. [Посредник (Mediator)](behavioral-patterns/mediator.md)
 6. [Посетитель (Visitor)](behavioral-patterns/visitor/)
 7. [Шаблонный метод (Template method)](behavioral-patterns/tamplate-method.md)
-8. [Хранитель (Memento)](behavioral-patterns/memento.md)
+8. [Опекун (Memento)](behavioral-patterns/memento.md)
 9. [Итератор (Iterator)](behavioral-patterns/iterator.md)
 10. [Свойство (Property)](behavioral-patterns/property/)

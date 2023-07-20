@@ -31,7 +31,7 @@
     * [Возможные реализации для решения конкретных задач](patterns/behavioral-patterns/visitor/visitor-concrete-implementation.md)
   * [Посредник](patterns/behavioral-patterns/mediator.md)
   * [Шаблонный метод](patterns/behavioral-patterns/tamplate-method.md)
-  * [Хранитель](patterns/behavioral-patterns/memento.md)
+  * [Опекун](patterns/behavioral-patterns/memento.md)
   * [Итератор](patterns/behavioral-patterns/iterator.md)
   * [Свойство](patterns/behavioral-patterns/property/README.md)
     * [Возможные реализации для решения конкретных задач](patterns/behavioral-patterns/property/property-concrete-implementation.md)
