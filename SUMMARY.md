@@ -6,7 +6,8 @@
 
 * [Оглавление](patterns/oglavlenie.md)
 * [Порождающие паттерны](patterns/creationals-patterns/README.md)
-  * [Фабричный метод](patterns/creationals-patterns/factory-method.md)
+  * [Фабричный метод](patterns/creationals-patterns/factory-method/README.md)
+    * [Возможные реализации для решения конкретных задач](patterns/creationals-patterns/factory-method/concrete-implementation.md)
   * [Абстрактная фабрика](patterns/creationals-patterns/abstract-factory.md)
   * [Прототип](patterns/creationals-patterns/prototype.md)
   * [Строитель](patterns/creationals-patterns/builder.md)
