@@ -1,6 +1,7 @@
 # Table of contents
 
 * [Введение в паттерны](README.md)
+* [Введение в идиомы](idioms-intro.md)
 
 ## Паттерны <a href="#patterns" id="patterns"></a>
 
@@ -35,3 +36,18 @@
   * [Итератор](patterns/behavioral-patterns/iterator.md)
   * [Свойство](patterns/behavioral-patterns/property/README.md)
     * [Возможные реализации для решения конкретных задач](patterns/behavioral-patterns/property/property-concrete-implementation.md)
+
+## Идиомы <a href="#idioms" id="idioms"></a>
+
+* [Оглавление](idioms/table-of-content.md)
+* [RAII](idioms/raii.md)
+* [Type erasure](idioms/type-erasure.md)
+* [CRTP](idioms/crtp.md)
+* [Статический полиморфизм](idioms/static-polimorphism.md)
+* [Shrink to fit](idioms/shrink-to-fit.md)
+* [Erase remote](idioms/erase-remote.md)
+* [Decltype (auto)](idioms/decltype-auto.md)
+* [Copy and swap](idioms/copy-and-swap.md)
+* [Safe bool](idioms/safe-bool.md)
+* [Scope guard](idioms/scope-guard.md)
+* [Adressof](idioms/adressof.md)
