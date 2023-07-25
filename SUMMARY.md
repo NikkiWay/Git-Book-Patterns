@@ -41,7 +41,8 @@
 
 * [Оглавление](idioms/table-of-content.md)
 * [RAII](idioms/raii.md)
-* [Type erasure](idioms/type-erasure.md)
+* [Type erasure](idioms/type-erasure/README.md)
+  * [Контейнеры с type erasure](idioms/type-erasure/konteinery-s-type-erasure.md)
 * [CRTP](idioms/crtp.md)
 * [Статический полиморфизм](idioms/static-polimorphism.md)
 * [Shrink to fit](idioms/shrink-to-fit.md)
