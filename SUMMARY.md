@@ -46,6 +46,7 @@
 * [CRTP](idioms/crtp.md)
 * [Статический полиморфизм](idioms/static-polimorphism.md)
 * [Shrink to fit](idioms/shrink-to-fit.md)
+* [Proxy](idioms/proxy.md)
 * [Erase remove](idioms/erase-remote.md)
 * [Decltype (auto)](idioms/decltype-auto.md)
 * [Copy and swap](idioms/copy-and-swap.md)
