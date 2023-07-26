@@ -111,7 +111,6 @@ private:
 </strong>    MyClass obj1(10);
     MyClass obj2(0);
 
-
     if (obj1) 
     {
         std:: cout &#x3C;&#x3C; "obj1 is true" &#x3C;&#x3C; std:: endl;
