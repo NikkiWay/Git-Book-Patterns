@@ -34,6 +34,14 @@ layout:
 Наследование от некоторых классов может быть запрещено.
 {% endhint %}
 
+## UML диаграмма
+
+<div data-full-width="true">
+
+<figure><img src="../../.gitbook/assets/Decorator.png" alt=""><figcaption><p>UML диаграмма паттерна "Декоратор"</p></figcaption></figure>
+
+</div>
+
 ## Общая реализация на языке С++
 
 {% tabs %}

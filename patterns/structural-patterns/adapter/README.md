@@ -51,6 +51,14 @@ layout:
 При использовании адаптера расширение может относиться не к одному классу, а к целой иерархии классов.
 {% endhint %}
 
+## UML диаграмма
+
+<div data-full-width="true">
+
+<figure><img src="../../../.gitbook/assets/Adapter.png" alt=""><figcaption><p>UML диаграмма паттерна "Адаптер"</p></figcaption></figure>
+
+</div>
+
 ## Общая реализация на языке С++
 
 {% tabs %}
