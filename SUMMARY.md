@@ -52,4 +52,4 @@
 * [Copy and swap](idioms/copy-and-swap.md)
 * [Safe bool](idioms/safe-bool.md)
 * [Scope guard](idioms/scope-guard.md)
-* [Adressof](idioms/adressof.md)
+* [Addressof](idioms/adressof.md)
