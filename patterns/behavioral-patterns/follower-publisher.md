@@ -27,6 +27,14 @@ layout:
 
 Паттерн позволяет отделить логику обработки событий от объектов, генерирующих эти события.
 
+## UML диаграмма
+
+<div data-full-width="true">
+
+<figure><img src="../../.gitbook/assets/subcriber-white.png" alt=""><figcaption><p>UML диаграмма паттерна "Подписчик-издатель"</p></figcaption></figure>
+
+</div>
+
 ## Общая реализация на языке C++
 
 {% tabs %}

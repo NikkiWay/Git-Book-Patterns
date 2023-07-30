@@ -33,6 +33,14 @@ layout:
 
 Появляется возможность создавать набор операций над объектом: операция выполнения, отмены и повтора действия.
 
+## UML диаграмма
+
+<div data-full-width="true">
+
+<figure><img src="../../.gitbook/assets/command_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Команда"</p></figcaption></figure>
+
+</div>
+
 ## Общая реализация на языке C++
 
 {% tabs %}
