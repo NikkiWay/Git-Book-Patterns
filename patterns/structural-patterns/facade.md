@@ -17,7 +17,7 @@ description: Facade
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/facade.png" alt=""><figcaption><p>UML диаграмма паттерна "Фасад"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/facade_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Фасад"</p></figcaption></figure>
 
 </div>
 

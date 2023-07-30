@@ -41,7 +41,7 @@ description: Composite
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/composite.png" alt=""><figcaption><p>UML диаграмма паттерна "Компоновщик"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/composite_white (1).png" alt=""><figcaption><p>UML диаграмма паттерна "Компоновщик"</p></figcaption></figure>
 
 </div>
 

@@ -28,7 +28,7 @@ description: Visitor
 
 <div data-full-width="true">
 
-<figure><img src="../../../.gitbook/assets/visitor.png" alt=""><figcaption><p>UML диаграмма паттерна "Посетитель"</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/visitor_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Посетитель"</p></figcaption></figure>
 
 </div>
 

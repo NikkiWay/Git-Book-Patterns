@@ -37,7 +37,7 @@ layout:
 
 <div data-full-width="true">
 
-<figure><img src="../../../.gitbook/assets/fabric_method (1).png" alt=""><figcaption><p>UML диаграмма паттерна "Фабричный метод"</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/fabric_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Фабричный метод"</p></figcaption></figure>
 
 </div>
 

@@ -26,7 +26,7 @@ description: Proxy
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/proxy.png" alt=""><figcaption><p>UML диаграмма паттерна "Заместитель"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/proxy_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Заместитель"</p></figcaption></figure>
 
 </div>
 

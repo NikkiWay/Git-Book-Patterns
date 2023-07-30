@@ -37,7 +37,7 @@ layout:
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/chain.png" alt=""><figcaption><p>UML диаграмма паттерна "Цепочка обязанностей"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/handler_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Цепочка обязанностей"</p></figcaption></figure>
 
 </div>
 

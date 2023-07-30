@@ -41,7 +41,7 @@ layout:
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/abstract_factory.png" alt=""><figcaption><p>UML диаграмма паттерна "Абстрактная фабрика"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/abstract_factory_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Абстрактная фабрика"</p></figcaption></figure>
 
 </div>
 

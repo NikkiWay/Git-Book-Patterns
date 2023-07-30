@@ -30,7 +30,7 @@ description: Bridge
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/bridge.png" alt=""><figcaption><p>UML диаграмма паттерна "Мост"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/bridge_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Мост"</p></figcaption></figure>
 
 </div>
 

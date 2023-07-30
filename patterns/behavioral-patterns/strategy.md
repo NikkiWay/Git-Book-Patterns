@@ -41,7 +41,7 @@ layout:
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/strategy.png" alt=""><figcaption><p>UML диаграмма паттерна "Стратегия"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/strategy_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Стратегия"</p></figcaption></figure>
 
 </div>
 

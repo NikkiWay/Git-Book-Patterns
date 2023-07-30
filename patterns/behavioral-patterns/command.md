@@ -37,7 +37,7 @@ layout:
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/command.png" alt=""><figcaption><p>UML диаграмма паттерна "Команда"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/command_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Команда"</p></figcaption></figure>
 
 </div>
 

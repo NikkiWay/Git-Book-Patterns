@@ -37,7 +37,7 @@ layout:
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/mediator.png" alt=""><figcaption><p>UML диаграмма паттерна "Посредник"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/mediator_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Посредник"</p></figcaption></figure>
 
 </div>
 

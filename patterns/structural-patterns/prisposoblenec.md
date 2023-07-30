@@ -25,7 +25,7 @@ description: Flyweight
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/flyweight.png" alt=""><figcaption><p>UML диаграмма паттерна "Приспособленец"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/flyweight_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Приспособленец"</p></figcaption></figure>
 
 </div>
 

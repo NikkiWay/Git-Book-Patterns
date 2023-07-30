@@ -31,7 +31,7 @@ layout:
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/publ-sub.png" alt=""><figcaption><p>UML диаграмма паттерна "Подписчик-издатель"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/subcriber-white.png" alt=""><figcaption><p>UML диаграмма паттерна "Подписчик-издатель"</p></figcaption></figure>
 
 </div>
 

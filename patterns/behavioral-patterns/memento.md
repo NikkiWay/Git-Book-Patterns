@@ -17,7 +17,7 @@ description: Memento
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/memento.png" alt=""><figcaption><p>UML диаграмма паттерна "Опекун"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/memento_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Опекун"</p></figcaption></figure>
 
 </div>
 

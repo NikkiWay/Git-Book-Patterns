@@ -38,7 +38,7 @@ layout:
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/Decorator.png" alt=""><figcaption><p>UML диаграмма паттерна "Декоратор"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/decorator_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Декоратор"</p></figcaption></figure>
 
 </div>
 

@@ -37,7 +37,7 @@ layout:
 
 <div data-full-width="true">
 
-<figure><img src="../../.gitbook/assets/builder.png" alt=""><figcaption><p>UML диаграмма паттерна "Строитель"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/builder_white.png" alt=""><figcaption><p>UML диаграмма паттерна "Строитель"</p></figcaption></figure>
 
 </div>
 
