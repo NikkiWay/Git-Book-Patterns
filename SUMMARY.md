@@ -7,8 +7,9 @@
 * [Оглавление](patterns/oglavlenie.md)
 * [Порождающие паттерны](patterns/creationals-patterns/README.md)
   * [Фабричный метод](patterns/creationals-patterns/factory-method/README.md)
-    * [Реализации на С++](patterns/creationals-patterns/factory-method/concrete-implementation.md)
+    * [Реализации на С++](patterns/creationals-patterns/factory-method/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/creationals-patterns/factory-method/realizacii-na-kotlin.md)
+    * [Возможные реализации для решения конкретных задач](patterns/creationals-patterns/factory-method/concrete-implementation.md)
   * [Абстрактная фабрика](patterns/creationals-patterns/abstract-factory/README.md)
     * [Реализации на С++](patterns/creationals-patterns/abstract-factory/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/creationals-patterns/abstract-factory/realizacii-na-kotlin.md)
@@ -28,6 +29,7 @@
   * [Адаптер](patterns/structural-patterns/adapter/README.md)
     * [Реализации на С++](patterns/structural-patterns/adapter/adapter-concrete-implementation.md)
     * [Реализации на Kotlin](patterns/structural-patterns/adapter/realizacii-na-kotlin.md)
+    * [Возможные реализации для решения конкретных задач](patterns/structural-patterns/adapter/vozmozhnye-realizacii-dlya-resheniya-konkretnykh-zadach.md)
   * [Декоратор](patterns/structural-patterns/dekorator/README.md)
     * [Реализации на С++](patterns/structural-patterns/dekorator/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/structural-patterns/dekorator/realizacii-na-kotlin.md)
@@ -56,7 +58,8 @@
     * [Реализации на С++](patterns/behavioral-patterns/follower-publisher/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/behavioral-patterns/follower-publisher/realizacii-na-kotlin.md)
   * [Посетитель](patterns/behavioral-patterns/visitor/README.md)
-    * [Реализации на языке С++](patterns/behavioral-patterns/visitor/visitor-concrete-implementation.md)
+    * [Реализации на С++](patterns/behavioral-patterns/visitor/realizacii-na-s++.md)
+    * [Возможные реализации для решения конкретных задач](patterns/behavioral-patterns/visitor/visitor-concrete-implementation.md)
   * [Посредник](patterns/behavioral-patterns/mediator/README.md)
     * [Реализации на С++](patterns/behavioral-patterns/mediator/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/behavioral-patterns/mediator/realizacii-na-kotlin.md)
@@ -68,7 +71,8 @@
     * [Реализации на С++](patterns/behavioral-patterns/iterator/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/behavioral-patterns/iterator/realizacii-na-kotlin.md)
   * [Свойство](patterns/behavioral-patterns/property/README.md)
-    * [Реализации на С++](patterns/behavioral-patterns/property/property-concrete-implementation.md)
+    * [Реализации на С++](patterns/behavioral-patterns/property/realizacii-na-s++.md)
+    * [Возможные реализации для решения конкретных задач](patterns/behavioral-patterns/property/property-concrete-implementation.md)
 
 ***
 
