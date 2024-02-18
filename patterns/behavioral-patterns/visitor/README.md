@@ -32,143 +32,9 @@ description: Visitor
 
 </div>
 
-## Общая реализация на C++
-
-{% tabs %}
-{% tab title="includes" %}
-{% code lineNumbers="true" fullWidth="true" %}
-```cpp
-# include <iostream>
-# include <memory>
-# include <vector>
-
-using namespace std;
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Visitor" %}
-{% code lineNumbers="true" fullWidth="true" %}
-```cpp
-class Circle;
-class Rectangle;
-
-class Visitor
-{
-public:
-    virtual ~Visitor() = default;
-    virtual void visit(Circle& ref) = 0;
-    virtual void visit(Rectangle& ref) = 0;
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Shape" %}
-{% code lineNumbers="true" fullWidth="true" %}
-```cpp
-class Shape
-{
-public:
-    virtual ~Shape() = default;
-    virtual void accept(shared_ptr<Visitor> visitor) = 0;
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Circle" %}
-{% code lineNumbers="true" fullWidth="true" %}
-```cpp
-class Circle : public Shape
-{
-public:
-    void accept(shared_ptr<Visitor> visitor) override 
-    { 
-        visitor->visit(*this); 
-    }
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Rectangle" %}
-{% code lineNumbers="true" fullWidth="true" %}
-```cpp
-class Rectangle : public Shape
-{
-public:
-    void accept(shared_ptr<Visitor> visitor)  override 
-    { 
-        visitor->visit(*this); 
-    }
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="ConcreteVisitor" %}
-{% code lineNumbers="true" fullWidth="true" %}
-```cpp
-class ConcreteVisitor : public Visitor
-{
-public:
-    void visit(Circle& ref) override 
-    { 
-        cout << "Circle;" << endl; 
-    }
-    void visit(Rectangle& ref) override 
-    { 
-        cout << "Rectangle;" << endl; 
-    }
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Figure" %}
-{% code lineNumbers="true" fullWidth="true" %}
-```cpp
-class Figure : public Shape
-{
-    using Shapes = vector<shared_ptr<Shape>>;
-private:
-    Shapes shapes;
-public:
-    Figure(initializer_list<shared_ptr<Shape>> list)
-    {
-        for (auto&& elem : list)
-            shapes.emplace_back(elem);
-    }
-    void accept(shared_ptr<Visitor> visitor)  override
-    {
-        for (auto& elem : shapes)
-            elem->accept(visitor);
-    }
-};
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
-
-{% code lineNumbers="true" fullWidth="true" %}
-```cpp
-int main()
-{
-    shared_ptr<Shape> figure = make_shared<Figure>(
-        initializer_list<shared_ptr<Shape>>(
-            { make_shared<Circle>(), make_shared<Rectangle>(), make_shared<Circle>() }
-        )
-    );
-    shared_ptr<Visitor> visitor = make_shared<ConVisitor>();
-    figure->accept(visitor);
-}
-```
-{% endcode %}
-
 ## Преимущества
 
-* объединение разных иерархий в одну (решение проблемы [стратегии](../strategy.md))
+* объединение разных иерархий в одну (решение проблемы [стратегии](../strategy/))
 * значительное упрощение схемы использования
 * отсутствие оберточных функций (решение проблемы [адаптера](../../structural-patterns/adapter/))
 * открытость кода для расширения: добавление новых классов-посетителей позволяет расширять функциональность без изменения существующего кода
@@ -196,6 +62,6 @@ int main()
 
 ## Связь с другими паттернами
 
-* [Компоновщик](../../structural-patterns/composite.md): посетители могут использоваться для выполнения операции над всеми объектами структуры, определенной с помощью паттерна компоновщик.
-* [Посредник](../opekun.md): посетитель может быть связан с паттерном посредник для обмена информацией между различными объектами в системе. Посредник может передавать посетителям необходимую информацию о состоянии объектов, чтобы они могли выполнить соответствующие операции.
-* [Стратегия](../strategy.md): посетитель может быть связан с паттерном стратегия для предоставления различных стратегий обработки элементов структуры. Посетитель может быть реализован как одна из стратегий, которая может быть выбрана во время выполнения в зависимости от требуемой операции.
+* [Компоновщик](../../structural-patterns/composite/): посетители могут использоваться для выполнения операции над всеми объектами структуры, определенной с помощью паттерна компоновщик.
+* [Посредник](https://github.com/NikkiWay/Git-Book-Patterns/blob/main/patterns/behavioral-patterns/opekun.md): посетитель может быть связан с паттерном посредник для обмена информацией между различными объектами в системе. Посредник может передавать посетителям необходимую информацию о состоянии объектов, чтобы они могли выполнить соответствующие операции.
+* [Стратегия](../strategy/): посетитель может быть связан с паттерном стратегия для предоставления различных стратегий обработки элементов структуры. Посетитель может быть реализован как одна из стратегий, которая может быть выбрана во время выполнения в зависимости от требуемой операции.
