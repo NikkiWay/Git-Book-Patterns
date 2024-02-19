@@ -4,6 +4,10 @@ description: Chain of Responsibility
 
 # Реализации на Kotlin
 
+## UML диаграмма
+
+<figure><img src="../../../.gitbook/assets/chain.png" alt=""><figcaption><p>UML диаграмма для общей реализации паттерна "Цепочка обязанностей" на Kotlin</p></figcaption></figure>
+
 ## Общая реализация на языке Kotlin
 
 {% tabs %}

@@ -4,6 +4,10 @@ description: Prototype
 
 # Реализации на Java
 
+## UML диаграмма
+
+<figure><img src="../../../.gitbook/assets/prototype.png" alt=""><figcaption><p>UML диаграмма для общей реализации паттерна "Прототип" на Java</p></figcaption></figure>
+
 ## Общая реализация на языке Java
 
 {% tabs %}

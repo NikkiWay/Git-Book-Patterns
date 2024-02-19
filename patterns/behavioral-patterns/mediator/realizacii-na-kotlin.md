@@ -4,6 +4,10 @@ description: Mediator
 
 # Реализации на Kotlin
 
+## UML диаграмма
+
+<figure><img src="../../../.gitbook/assets/mediator.png" alt=""><figcaption><p>UML диаграмма для общей реализации паттерна "Посредник" на Kotlin</p></figcaption></figure>
+
 ## Общая реализация на языке Kotlin
 
 #### Реализация класса медиатора
@@ -38,7 +42,7 @@ class SmartHomeMediator {
 {% endtab %}
 {% endtabs %}
 
-#### Реализация класса сообщений&#x20;
+#### Реализация класса сообщений
 
 {% tabs %}
 {% tab title="Message" %}
@@ -93,7 +97,7 @@ sealed class MessageState {
 {% endtab %}
 {% endtabs %}
 
-#### Реализация классов устройств&#x20;
+#### Реализация классов устройств
 
 {% tabs %}
 {% tab title="SmartHomeDevice" %}

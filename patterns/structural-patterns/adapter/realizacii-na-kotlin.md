@@ -4,6 +4,10 @@ description: Adapter
 
 # Реализации на Kotlin
 
+## UML диаграмма
+
+<figure><img src="../../../.gitbook/assets/adapter.png" alt=""><figcaption><p>UML диаграмма для общей реализации паттерна "Адаптер" на Kotlin</p></figcaption></figure>
+
 ## Общая реализация на языке Kotlin
 
 {% tabs %}

@@ -4,6 +4,10 @@ description: Iterator
 
 # Реализации на Kotlin
 
+## UML диаграмма
+
+<figure><img src="../../../.gitbook/assets/iterator.png" alt=""><figcaption><p>UML диаграмма для общей реализации паттерна "Итератор" на Kotlin</p></figcaption></figure>
+
 ## Общая реализация на языке Kotlin
 
 {% tabs %}

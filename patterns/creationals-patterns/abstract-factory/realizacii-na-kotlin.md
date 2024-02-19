@@ -4,6 +4,10 @@ description: Abstarct factory
 
 # Реализации на Kotlin
 
+## UML диаграмма
+
+<figure><img src="../../../.gitbook/assets/abstract-fabric.png" alt=""><figcaption><p>UML диаграмма для общей реализации паттерна "Абстрактная фабрика" на Kotlin</p></figcaption></figure>
+
 ## Общая реализация на языке Kotlin
 
 #### Определение общего интерфейса инструментов

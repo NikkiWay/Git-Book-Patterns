@@ -4,6 +4,10 @@ description: Factory method
 
 # Реализации на Kotlin
 
+## UML диаграмма
+
+<figure><img src="../../../.gitbook/assets/fabric-method.png" alt=""><figcaption><p>UML диаграмма для общей реализации паттерна "Фабричный метод" на Kotlin</p></figcaption></figure>
+
 ## Общая реализация на языке Kotlin
 
 #### Реализация классов машин

@@ -4,6 +4,10 @@ description: Builder
 
 # Реализации на Kotlin
 
+## UML диаграмма
+
+<figure><img src="../../../.gitbook/assets/builder.png" alt=""><figcaption><p>UML диаграмма для общей реализации паттерна "Строитель" на Kotlin</p></figcaption></figure>
+
 ## Общая реализация на языке Kotlin
 
 #### Реализация класса машины и ее компонентов

@@ -4,6 +4,10 @@ description: Strategy
 
 # Реализации на Kotlin
 
+## UML диаграмма
+
+<figure><img src="../../../.gitbook/assets/strategy.png" alt=""><figcaption><p>UML диаграмма для общей реализации паттерна "Стратегия" на Kotlin</p></figcaption></figure>
+
 ## Общая реализация на языке Kotlin
 
 {% tabs %}

@@ -4,6 +4,10 @@ description: Decorator
 
 # Реализации на Kotlin
 
+## UML диаграмма
+
+<figure><img src="../../../.gitbook/assets/decorator.png" alt=""><figcaption><p>UML диаграмма для общей реализации паттерна "Декоратор" на Kotlin</p></figcaption></figure>
+
 ## Общая реализация на языке Kotlin
 
 {% tabs %}
