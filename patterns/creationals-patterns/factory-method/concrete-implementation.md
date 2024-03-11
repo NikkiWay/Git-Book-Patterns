@@ -20,172 +20,90 @@ layout:
 В рамках данной реализации появляется возможность избавиться от необходимости создания конкретного объекта в коде.
 
 {% tabs %}
-{% tab title="Product" %}
+{% tab title="Car" %}
 {% code fullWidth="true" %}
 ```cpp
-class Product
+class Car
 {
 public:
-    virtual ~Product() = 0;
+    virtual ~Car() = default;  
     virtual void run() = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="ConcreteProd1" %}
+{% tab title="Audi" %}
 {% code fullWidth="true" %}
 ```cpp
-class ConcreteProd1 : public Product
+class Audi : public Car
 {
 public:
-    virtual ~ConcreteProd1() override 
-    { 
-        cout << "Destructor;" << endl; 
+    Audi() { 
+        cout << "Calling the Audi constructor;" << endl; 
     }
     
-    virtual void run() override 
-    { 
-        cout << "Method run;" << endl; 
+    ~Audi() override { 
+        cout << "Calling the Audi destructor;" << endl; 
     }
-};
-
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Creator" %}
-```cpp
-class Creator
-{
-public:
-    virtual unique_ptr<Product> createProduct() = 0;
-};
-```
-{% endtab %}
-
-{% tab title="ConcreteCreator" %}
-{% code fullWidth="true" %}
-```cpp
-template <typename Tprod>
-class ConcreteCreator : public Creator
-{
-public:
-    virtual unique_ptr<Product> createProduct() override
-    {
-        return unique_ptr<Product>(new Tprod());
+    
+    void run() override { 
+        cout << "Calling the run method;" << endl;
     }
 };
 ```
 {% endcode %}
 {% endtab %}
-{% endtabs %}
 
-{% code fullWidth="true" %}
+{% tab title="Concepts" %}
 ```cpp
-# include <iostream>
-# include <memory>
+template <typename Derived, typename Base>
+concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
 
-using namespace std;
-
-int main()
-{
-    shared_ptr<Creator> cr(new ConCreator<ConProd1>()); 
-    shared_ptr<Product> ptr = cr->createProduct();
-
-    ptr->run();
-}
+template <typename Type>
+concept NotAbstract = !is_abstract_v<Type>; 
 ```
-{% endcode %}
+{% endtab %}
 
-## Фабричный метод с шаблонным базовым классом
-
-BaseCreator - шаблонный базовый класс, определяющий метод create(), который должен быть реализован в подклассах. Creator - класс, наследующийся от BaseCreator, и реализующий метод create(). Он создает экземпляр заданного типа продукта с помощью переданных аргументов.
-
-При использовании данного способа реализации можно создавать экземпляры различных продуктов с помощью общего интерфейса создателя и передавать аргументы для создания конкретных продуктов. Это позволяет более гибко управлять процессом создания объектов и добавлять новые типы продуктов, не изменяя кода создателя.
-
-{% tabs %}
-{% tab title="Product" %}
+{% tab title="CarMaker" %}
 {% code fullWidth="true" %}
 ```cpp
-class Product
+class CarMaker
 {
 public:
-	virtual ~Product() = default;
-	virtual void run() = 0;
+    virtual ~CarMaker() = default;
+    virtual unique_ptr<Car> create() = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="ConcreteProd1" %}
+{% tab title="AudiMaker" %}
 {% code fullWidth="true" %}
 ```cpp
-class ConcreteProd1 : public Product
+template <Derivative<Car> Tprod>
+requires NotAbstract<Tprod>
+class AudiMaker : public CarMaker
 {
-private:
-	int count;
-	double price;
 public:
-	ConcreteProd1(int c, double p) : count(c), price(p)
+	unique_ptr<Car> create() override
 	{
-		cout << "Calling the ConcreteProd1 constructor;" << endl;
-	}
-	
-	virtual ~ConProd1() override 
-	{ 
-		cout << "Calling the ConcreteProd1 destructor;" << endl; 
-	}
-	
-	virtual void run() override 
-	{ 
-		cout << "Calling the run method;" << endl; 
+		return make_unique<Tprod>();
 	}
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="BaseCreator" %}
-```cpp
-template <typename Tbase, typename ...Args>
-class BaseCreator
-{
-public:
-	virtual ~BaseCreator() = default;
-	virtual unique_ptr<Tbase> create(Args ...args) = 0;
-};
-```
-{% endtab %}
-
-{% tab title="Creator" %}
+{% tab title="CarUser" %}
 {% code fullWidth="true" %}
 ```cpp
-template <typename Tbase, typename Tprod, typename ...Args>
-class Creator : public BaseCreator<Tbase, Args...>
+class CarUser
 {
 public:
-	virtual unique_ptr<Tbase> create(Args ...args) override
+	void use(shared_ptr<CarMaker>& cr)
 	{
-		return unique_ptr<Tbase>(new Tprod(args...));
-	}
-};
-
-using TbaseCreator = BaseCreator<Product, int, double>;
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="User" %}
-{% code fullWidth="true" %}
-```cpp
-class User
-{
-public:
-	void use(shared_ptr<TbaseCreator>& cr)
-	{
-		shared_ptr<Product> ptr = cr->create(1, 100.);
-
+		shared_ptr<Car> ptr = cr->create();
 		ptr->run();
 	}
 };
@@ -203,378 +121,13 @@ using namespace std;
 
 int main()
 {
-	shared_ptr<TbaseCreator> cr(new Creator<Product, ConcreteProd1, int, double>());
-
-	unique_ptr<User> us = make_unique<User>();
-
-	us->use(cr);
+	shared_ptr<CarMaker> cr = make_shared<AudiMaker<Audi>>();
+	CarUser{}.use(cr);
 }
 ```
 {% endcode %}
 
-## Фабричный метод без повторного создания объектов
-
-В классе Creator определено приватное поле product, которое хранит созданный продукт. Если продукт уже создан, то возвращается указатель на него, иначе вызывается метод createProduct() для его создания.
-
-Такая реализация позволяет один раз создав продукт, в дальнейшем только возвращать один и тот же объект продукта через метод getProduct().
-
-{% tabs %}
-{% tab title="Product" %}
-{% code fullWidth="true" %}
-```cpp
-class Product
-{
-public:
-	virtual ~Product() = default;
-	virtual void run() = 0;
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="ConcreteProd1" %}
-{% code fullWidth="true" %}
-```cpp
-class ConcreteProd1 : public Product
-{
-public:
-	ConcreteProd1() 
-	{ 
-		cout << "Calling the ConcreteProd1 constructor;" << endl; 
-	}
-	
-	virtual ~ConcreteProd1() override 
-	{ 
-		cout << "Calling the ConcreteProd1 destructor;" << endl; 
-	}
-	
-	virtual void run() override 
-	{ 
-		cout << "Calling the run method;" << endl; 
-	}
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Creator" %}
-```cpp
-class Creator
-{
-public:
-	shared_ptr<Product> getProduct()
-	{
-		if (!product)
-		{
-			product = createProduct();
-		}
-
-	return product;
-}
-
-protected:
-	virtual shared_ptr<Product> createProduct() = 0;
-
-private:
-	shared_ptr<Product> product;
-};
-```
-{% endtab %}
-
-{% tab title="ConcreteCreator" %}
-{% code fullWidth="true" %}
-```cpp
-template <typename Tprod>
-class ConcreteCreator : public Creator
-{
-protected:
-	virtual shared_ptr<Product> createProduct() override
-	{
-		return shared_ptr<Product>(new Tprod());
-	}
-};
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
-
-{% code fullWidth="true" %}
-```cpp
-# include <iostream>
-# include <memory>
-
-using namespace std;
-
-int main()
-{
-	shared_ptr<Creator> cr(new  ConcreteCreator<ConcreteProd1>());
-	shared_ptr<Product> ptr1 = cr->getProduct();
-	shared_ptr<Product> ptr2 = cr->getProduct();
-
-	cout << ptr1.use_count() << endl;
-	ptr1->run();
-}
-```
-{% endcode %}
-
-## Фабричный метод с разделением обязанностей
-
-Класс Solution выполняет роль посредника между клиентским кодом и классами создателей продуктов. Он отвечает за регистрацию методов создания объектов для каждого типа продукта и предоставляет методы для создания объектов по их идентификаторам.
-
-{% tabs %}
-{% tab title="Product" %}
-{% code fullWidth="true" %}
-```cpp
-class Product
-{
-public:
-    virtual ~Product() = 0;
-    virtual void run() = 0;
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="ConcreteProd1" %}
-{% code fullWidth="true" %}
-```cpp
-class ConcreteProd1 : public Product
-{
-public:
-	ConcreteProd1() 
-	{ 
-		cout << "Calling the ConcreteProd1 constructor;" << endl; 
-	}
-	
-	virtual ~ConProd1() override 
-	{ 
-		cout << "Calling the ConcreteProd1 destructor;" << endl; 
-	}
-	
-	virtual void run() override 
-	{ 
-		cout << "Calling the run method;" << endl; 
-	}
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="ConcreteProd2" %}
-{% code fullWidth="true" %}
-```cpp
-class ConcreteProd2 : public Product
-{
-public:
-	ConcreteProd2() 
-	{ 
-		cout << "Calling the ConcreteProd2 constructor;" << endl; 
-	}
-	
-	virtual ~ConcreteProd2() override 
-	{ 
-		cout << "Calling the ConcreteProd2 destructor;" << endl; 
-	}
-	
-	virtual void run() override 
-	{ 
-		cout << "Calling the run method;" << endl; 
-	}
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Creator" %}
-```cpp
-class Creator
-{
-public:
-	template <typename Tprod>
-	static unique_ptr<Creator> createConcreteCreator()
-	{
-		return unique_ptr<Creator>(new ConcreteCreator<Tprod>());
-	}
-
-};
-```
-{% endtab %}
-
-{% tab title="Solution" %}
-{% code fullWidth="true" %}
-```cpp
-class Solution
-{
-	using CreateCreator = unique_ptr<Creator>(*)();
-	using CallBackMap = map<size_t, CreateCreator>;
-
-public:
-	Solution() = default;
-	
-	Solution(initializer_list<pair<size_t, CreateCreator>> list)
-	{
-		for (auto elem : list)
-			this->registration(elem.first, elem.second);
-	}
-
-	bool registration(size_t id, CreateCreator createfun)
-	{
-		return callbacks.insert(CallBackMap::value_type(id, createfun)).second;
-	}
-	
-	bool check(size_t id) 
-	{ 
-		return callbacks.erase(id) == 1; 
-	}
-
-	unique_ptr<Creator> create(size_t id)
-	{
-		CallBackMap::const_iterator it = callbacks.find(id);
-	
-		if (it == callbacks.end())
-		{
-//			throw IdError();
-		}
-
-		return unique_ptr<Creator>((it->second)());
-	}
-
-private:
-	CallBackMap callbacks;
-};
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
-
-{% code fullWidth="true" %}
-```cpp
-# include <iostream>
-# include <initializer_list>
-# include <memory>
-# include <map>
-
-using namespace std;
-
-int main()
-{
-	shared_ptr<Solution> solution(new Solution({ {1, &Creator::createConcreteCreator<ConcreteProd1>} }));
-
-	solution->registration(2, &Creator::createConcreteCreator<ConcreteProd2>);
-
-	shared_ptr<Creator> cr(solution->create(2));
-	shared_ptr<Product> ptr = cr->createProduct();
-
-	ptr->run();
-}
-```
-{% endcode %}
-
-## **Шаблонный фабричный метод и подмена с перекомпиляцией**
-
-В рамках такого метода реализации, вместо того чтобы определять конкретные классы создателей для каждого типа продукта, определяется класс Creator с шаблонным параметром Tprod. Этот параметр типа указывает на тип создаваемого продукта.
-
-Появляется возможность подмены с перекомпиляцией – это операция, которая позволяет заменить одну реализацию класса на другую, и при этом не требуется перекомпилировать весь код, который использует этот класс.
-
-{% tabs %}
-{% tab title="Product" %}
-{% code fullWidth="true" %}
-```cpp
-class Product
-{
-public:
-    virtual ~Product() = 0;
-    virtual void run() = 0;
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="ConcreteProd1" %}
-{% code fullWidth="true" %}
-```cpp
-class ConcreteProd1 : public Product
-{
-public:
-	ConcreteProd1() 
-	{ 
-		cout << "Calling the ConcreteProd1 constructor;" << endl; 
-	}
-	
-	virtual ~ConProd1() override 
-	{ 
-		cout << "Calling the ConcreteProd1 destructor;" << endl; 
-	}
-	
-	virtual void run() override 
-	{ 
-		cout << "Calling the run method;" << endl; 
-	}
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Creator" %}
-```cpp
-template <typename Tprod>
-class Creator
-{
-public:
-	unique_ptr<Product> createProduct()
-	{
-		return unique_ptr<Product>(new Tprod());
-	}
-};
-```
-{% endtab %}
-
-{% tab title="User" %}
-{% code fullWidth="true" %}
-```cpp
-class User
-{
-public:
-	template<typename Tprod>
-	void use(shared_ptr<Creator<Tprod>> cr);
-	{
-		shared_ptr<Product> ptr = cr->createProduct();
-
-		ptr->run();
-	}
-};
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
-
-{% code fullWidth="true" %}
-```cpp
-# include <iostream>
-# include <memory>
-
-using namespace std;
-
-int main()
-{
-	shared_ptr<Creator<ConProd1>> cr(new Creator<ConProd1>());
-
-	unique_ptr<User> us = make_unique<User>();
-
-	us->use(cr);
-}
-```
-{% endcode %}
-
-## Фабричный метод и статический полиморфизм
-
-{% hint style="info" %}
-Статический полиморфизм (compile-time polymorphism) - это механизм, который позволяет вызывать различные функции или методы с одним и тем же именем, но с разными параметрами или типами данных. Это достигается с помощью перегрузки функций или методов. Компилятор статически выбирает соответствующую функцию или метод на основе типов параметров, указанных при вызове.
-{% endhint %}
-
-В рамках такого метода реализации, определи класс Work, который предоставляет статический метод create(), который принимает объект создателя и вызывает его метод create() для создания продукта. Он использует статический полиморфизм для вызова правильного метода на основе типа объекта создателя.
-
-Такая реализация фабричного метода с использованием статического полиморфизма позволяет гибко создавать объекты различных типов продуктов и создателей, используя общий интерфейс и не изменяя существующий код.
+## Фабричный метод с шаблонным CarMaker
 
 {% tabs %}
 {% tab title="Product" %}
@@ -590,72 +143,226 @@ public:
 {% endcode %}
 {% endtab %}
 
-{% tab title="ConcreteProd1" %}
+{% tab title="ConProd1" %}
 {% code fullWidth="true" %}
 ```cpp
-class ConcreteProd1 : public Product
+class ConProd1 : public Product
 {
 public:
-	ConcreteProd1() 
-	{ 
-		cout << "Calling the ConcreteProd1 constructor;" << endl; 
-	}
-	
-	virtual ~ConProd1() override 
-	{ 
-		cout << "Calling the ConcreteProd1 destructor;" << endl; 
-	}
-	
-	virtual void run() override 
-	{ 
-		cout << "Calling the run method;" << endl; 
-	}
+    ConProd1() 
+    { 
+        cout << "Calling the ConProd1 constructor;" << endl; 
+    }
+    
+    ~ConProd1() override 
+    { 
+        cout << "Calling the ConProd1 destructor;" << endl;
+    }
+
+    void run() override 
+    { 
+        cout << "Calling the run method;" << endl; 
+    }
 };
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Concepts" %}
+```cpp
+template <typename Derived, typename Base>
+concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
+
+template <typename Type>
+concept NotAbstract = !is_abstract_v<Type>;
+```
+{% endtab %}
+
+{% tab title="Creator" %}
+{% code fullWidth="true" %}
+```cpp
+template <Derivative<Product> Tprod>
+requires NotAbstract<Tprod>
+class Creator
+{
+public:
+    unique_ptr<Product> create()
+    {
+        return make_unique<Tprod>();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+class User
+{
+public:
+    template<NotAbstract Tprod>
+    requires Derivative<Tprod, Product>
+    void use(shared_ptr<Creator<Tprod>> cr);
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Method User" %}
+{% code fullWidth="true" %}
+```cpp
+template<NotAbstract Tprod>
+requires Derivative<Tprod, Product>
+void User::use(shared_ptr<Creator<Tprod>> cr)
+{
+    shared_ptr<Product> ptr = cr->create();
+    ptr->run();
+}
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+{% code fullWidth="true" %}
+```cpp
+# include <iostream>
+# include <memory>
+
+using namespace std;
+
+int main()
+{
+    using CreatorProd1_t = Creator<ConProd1>;
+    shared_ptr<CreatorProd1_t> cr = make_shared<CreatorProd1_t>();
+
+    unique_ptr<User> us = make_unique<User>();
+
+    us->use(cr);
+}
+```
+{% endcode %}
+
+## Фабричный метод без повторного создания объектов. Идиома NVI (Non-Virtual Interface).
+
+{% tabs %}
+{% tab title="Product" %}
+{% code fullWidth="true" %}
+```cpp
+class Product
+{
+public:
+    virtual ~Product() = default;
+    virtual void run() = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="ConProd1" %}
+{% code fullWidth="true" %}
+```cpp
+class ConProd1 : public Product
+{
+public:
+    ConProd1() 
+    { 
+        cout << "Calling the ConProd1 constructor;" << endl; 
+    }
+    ~ConProd1() override 
+    { 
+        cout << "Calling the ConProd1 destructor;" << endl; 
+    }
+
+    void run() override 
+    { 
+        cout << "Calling the run method;" << endl; 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Concepts" %}
+{% code fullWidth="true" %}
+```cpp
+template <typename Derived, typename Base>
+concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
+
+template <typename Type>
+concept NotAbstract = !is_abstract_v<Type>;
 ```
 {% endcode %}
 {% endtab %}
 
 {% tab title="Creator" %}
+{% code fullWidth="true" %}
 ```cpp
-template <typename Tcrt>
 class Creator
 {
 public:
-	auto create() const
-	{
-		return static_cast<const Tcrt*>(this)->create_impl();
-	}
-};
-```
-{% endtab %}
+    virtual ~Creator() = default;
+    shared_ptr<Product> getProduct();
 
-{% tab title="ProductCreator" %}
-{% code fullWidth="true" %}
-```cpp
-template <typename Tprod>
-class ProductCreator : public Creator<ProductCreator<Tprod>>
-{
-public:
-	unique_ptr<Product> create_impl() const
-	{
-		return unique_ptr<Product>(new Tprod());
-	}
+protected:
+    virtual shared_ptr<Product> createProduct() = 0;
+
+private:
+    shared_ptr<Product> product{ nullptr };
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="Work" %}
+{% tab title="ConCreator" %}
 {% code fullWidth="true" %}
 ```cpp
-class Work
+template <Derivative<Product> Tprod>
+requires NotAbstract<Tprod>
+class ConCreator : public Creator
+{
+protected:
+    shared_ptr<Product> createProduct() override
+    {
+        return  make_shared<Tprod>();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Method Creator" %}
+{% code fullWidth="true" %}
+```cpp
+# pragma region Method Creator
+shared_ptr<Product> Creator::getProduct()
+{
+    if (!product)
+    {
+        product = createProduct();
+    }
+
+    return product;
+}
+# pragma endregion
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+class User
 {
 public:
-	template <typename Type>
-	static auto create(const Type& crt)
-	{
-		return crt.create();
-	}
+    void use(shared_ptr<Creator>& cr)
+    {
+        shared_ptr<Product> ptr1 = cr->getProduct();
+        shared_ptr<Product> ptr2 = cr->getProduct();
+    
+        cout << "use count = " << ptr1.use_count() << endl;
+        ptr1->run();
+    }
 };
 ```
 {% endcode %}
@@ -669,13 +376,483 @@ public:
 
 using namespace std;
 
-void main()
+int main()
 {
-	Creator<ProductCreator<ConcreteProd1>> cr;
+    shared_ptr<Creator> cr = make_shared<ConCreator<ConProd1>>();
+    unique_ptr<User> us = make_unique<User>();
+    us->use(cr);
+}
+```
+{% endcode %}
 
-	auto product = Work::create(cr);
+## Фабричный метод с шаблонным базовым классом CarMaker
 
-	product->run();
+{% tabs %}
+{% tab title="Product" %}
+{% code fullWidth="true" %}
+```cpp
+class Product
+{
+public:
+    virtual ~Product() = default;
+    virtual void run() = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="ConProd1" %}
+{% code fullWidth="true" %}
+```cpp
+class ConProd1 : public Product
+{
+private:
+    int count;
+    double price;
+public:
+    ConProd1(int c, double p) : count(c), price(p)
+    {
+        cout << "Calling the ConProd1 constructor;" << endl;
+    }
+    
+    ~ConProd1() override 
+    { 
+        cout << "Calling the ConProd1 destructor;" << endl; 
+    }
+
+    void run() override 
+    { 
+        cout << "Count = " << count << "; Price = " << price << endl; 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="ConProd2" %}
+{% code fullWidth="true" %}
+```cpp
+class ConProd2// : public Product
+{
+public:
+    ConProd2(int c, double p)
+    {
+        cout << "Calling the ConProd2 constructor;" << endl;
+    }
+    
+    virtual ~ConProd2() 
+    { 
+        cout << "Calling the ConProd2 destructor;" << endl; 
+    }
+    
+    virtual void run() 
+    { 
+        cout << "Calling the run method ConProd2;" << endl; 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Concepts" %}
+```cpp
+template <typename Type>
+concept Abstract = is_abstract_v<Type>;
+
+template <typename Type>
+concept NotAbstract = !is_abstract_v<Type>;
+
+template <typename Derived, typename Base>
+concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
+```
+{% endtab %}
+
+{% tab title="Variants of the concept Constructible" %}
+{% code fullWidth="true" %}
+```cpp
+# pragma region Variants of the concept Constructible
+# define V_1
+
+# ifdef V_1
+template<typename Type, typename... Args>
+concept Constructible = requires(Args... args)
+{
+    Type{ args... };
+};
+
+# elif defined(V_2)
+template<typename Type, typename... Args>
+concept Constructible = requires
+{
+    Type{ declval<Args>()... };
+};
+
+# elif defined(V_3)
+template<typename Type, typename... Args>
+concept Constructible = is_constructible_v<Type, Args...>;
+
+# endif 
+
+# pragma endregion
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="BaseCreator" %}
+{% code fullWidth="true" %}
+```cpp
+template <Abstract Tbase, typename... Args>
+class BaseCreator
+{
+public:
+    virtual ~BaseCreator() = default;
+    virtual unique_ptr<Tbase> create(Args&& ...args) = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Creator" %}
+{% code fullWidth="true" %}
+```cpp
+template <typename Tbase, typename Tprod, typename... Args>
+requires NotAbstract<Tprod>&& Derivative<Tprod, Tbase>&& Constructible<Tprod, Args...>
+class Creator : public BaseCreator<Tbase, Args...>
+{
+public:
+    unique_ptr<Tbase> create(Args&& ...args) override
+    {
+        return make_unique<Tprod>(forward<Args>(args)...);
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+using BaseCreator_t = BaseCreator<Product, int, double>;
+
+class User
+{
+public:
+    void use(shared_ptr<BaseCreator_t>& cr)
+    {
+        shared_ptr<Product> ptr = cr->create(1, 100.);
+        ptr->run();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+{% code fullWidth="true" %}
+```cpp
+# include <iostream>
+# include <memory>
+
+using namespace std;
+
+int main()
+{
+    shared_ptr<BaseCreator_t> cr = make_shared<Creator<Product, ConProd1, int, double>>();
+    unique_ptr<User> us = make_unique<User>();
+    us->use(cr);
+}
+```
+{% endcode %}
+
+## Фабричный метод и статический полиморфизм
+
+{% hint style="info" %}
+Статический полиморфизм (compile-time polymorphism) - это механизм, который позволяет вызывать различные функции или методы с одним и тем же именем, но с разными параметрами или типами данных. Это достигается с помощью перегрузки функций или методов. Компилятор статически выбирает соответствующую функцию или метод на основе типов параметров, указанных при вызове.
+{% endhint %}
+
+{% tabs %}
+{% tab title="Product" %}
+{% code fullWidth="true" %}
+```cpp
+class Product
+{
+public:
+    virtual ~Product() = default;
+    virtual void run() = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="ConProd1" %}
+{% code fullWidth="true" %}
+```cpp
+class ConProd1 : public Product
+{
+public:
+    ConProd1() 
+    { 
+        cout << "Calling the ConProd1 constructor;" << endl; 
+    }
+    
+    ~ConProd1() override 
+    { 
+        cout << "Calling the ConProd1 destructor;" << endl; 
+    }
+
+    void run() override 
+    { 
+        cout << "Calling the run method;" << endl; 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Concepts" %}
+```cpp
+template <typename Derived, typename Base>
+concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
+
+template <typename Type>
+concept NotAbstract = !is_abstract_v<Type>;
+```
+{% endtab %}
+
+{% tab title="Creator" %}
+{% code fullWidth="true" %}
+```cpp
+template <typename Tcrt>
+class Creator
+{
+public:
+    auto create() const
+    {
+        return static_cast<const Tcrt*>(this)->create_impl();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="ProductCreator" %}
+{% code fullWidth="true" %}
+```cpp
+template <Derivative<Product> Tprod>
+requires NotAbstract<Tprod>
+class ProductCreator : public Creator<ProductCreator<Tprod>>
+{
+public:
+    unique_ptr<Product> create_impl() const
+    {
+        return make_unique<Tprod>();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+class User
+{
+public:
+    template<Derivative<Product> Tprod>
+    void use(Creator<ProductCreator<Tprod>>& cr) requires NotAbstract<Tprod>
+    {
+        auto product = cr.create();
+        product->run();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+{% code fullWidth="true" %}
+```cpp
+# include <iostream>
+# include <memory>
+
+using namespace std;
+
+int main()
+{
+    Creator<ProductCreator<ConProd1>> cr;
+    User{}.use(cr);
+}
+```
+{% endcode %}
+
+## Использование паттерна «фабричный метод» для паттерна Command
+
+{% tabs %}
+{% tab title="BaseCommandCreator" %}
+{% code fullWidth="true" %}
+```cpp
+class BaseCommandCreator
+{
+public:
+    ~BaseCommandCreator() = default;
+
+    virtual shared_ptr<Command> create_command() const = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Concept" %}
+{% code fullWidth="true" %}
+```cpp
+template <typename Tder, typename Tbase = Command>
+concept Derived = is_base_of_v<Tbase, Tder>;
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="CommandCreator" %}
+{% code fullWidth="true" %}
+```cpp
+template <Derived<Command> Type>
+class CommandCreator : public BaseCommandCreator
+{
+public:
+    template <typename... Args>
+    CommandCreator(Args ...args)
+    {
+        create_func = [args...]() { return make_shared<Type>(args...); };
+    }
+    ~CommandCreator() = default;
+
+    shared_ptr<Command> create_command() const override
+    {
+        return create_func();
+    }
+private:
+    function<shared_ptr<Command>()> create_func;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="MFP" %}
+{% code fullWidth="true" %}
+```cpp
+# pragma region Member_Function_Pointer
+namespace MFP
+{
+    template <typename T>
+    struct is_member_function_pointer_helper : std::false_type {};
+
+    template <typename T, typename U>
+    struct is_member_function_pointer_helper<T U::*> : std::is_function<T> {};
+
+    template <typename T>
+    struct is_member_function_pointer
+        : is_member_function_pointer_helper< typename std::remove_cv<T>::type > {};
+
+    template <typename T>
+    inline constexpr bool is_member_function_pointer_v = is_member_function_pointer<T>::value;
+}
+# pragma endregion
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Command" %}
+{% code fullWidth="true" %}
+```cpp
+class Command
+{
+public:
+    virtual ~Command() = default;
+    virtual void execute() = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="SimpleCommand" %}
+{% code fullWidth="true" %}
+```cpp
+template <typename Reseiver>
+requires is_class_v<Reseiver> && MFP::is_member_function_pointer_v<void (Reseiver::*)()>
+class SimpleCommand : public Command
+{
+    using Action = void(Reseiver::*)();
+    using Pair = pair<shared_ptr<Reseiver>, Action>;
+private:
+    Pair call;
+
+public:
+    SimpleCommand(shared_ptr<Reseiver> r, Action a) : call(r, a) {}
+    void execute() override 
+    { 
+        ((*call.first).*call.second)(); 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Object" %}
+{% code fullWidth="true" %}
+```cpp
+class Object
+{
+public:
+    void operation() 
+    { 
+        cout << "Run method;" << endl; 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Invoker" %}
+{% code fullWidth="true" %}
+```cpp
+class Invoker
+{
+public:
+    void run(shared_ptr<Command> com) 
+    { 
+        com->execute(); 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="SimpleComCreator" %}
+{% code fullWidth="true" %}
+```cpp
+template <typename Type>
+using SimpleComCreator = CommandCreator<SimpleCommand<Type>>;
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+{% code fullWidth="true" %}
+```cpp
+# include <iostream>
+# include <functional>
+
+using namespace std;
+
+int main()
+{
+    shared_ptr<Invoker> inv = make_shared<Invoker>();
+    shared_ptr<Object> obj = make_shared<Object>();
+
+    shared_ptr<BaseCommandCreator> cr = make_shared<SimpleComCreator<Object>>(obj, &Object::operation);
+
+    shared_ptr<Command> com = cr->create_command();
+
+    inv->run(com);
 }
 ```
 {% endcode %}

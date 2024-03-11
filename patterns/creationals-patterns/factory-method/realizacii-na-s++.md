@@ -7,116 +7,207 @@ description: Factory method
 ## Общая реализация на языке С++
 
 {% tabs %}
-{% tab title="Product" %}
+{% tab title="Car" %}
 {% code fullWidth="true" %}
 ```cpp
-class Product
+class Car
 {
 public:
-      virtual ~Product() = 0;
-      
-      virtual void run() = 0;
-};
- 
-Product::~Product() {}
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Creator" %}
-{% code fullWidth="true" %}
-```cpp
-class Creator
-{
-public:
-      virtual ~Creator() = 0;
-      
-      virtual unique_ptr<Product> createProduct() = 0;
-};
-
-Creator::~Creator() = default;
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="ConcreteCreator" %}
-{% code fullWidth="true" %}
-```cpp
-template <typename Tprod>
-class ConcreteCreator : public Creator
-{
-public:
-      virtual unique_ptr<Product> createProduct() override
-      {
-            return unique_ptr<Product>(new Tprod());
-      }
-};  
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="ConcreteProduct1" %}
-{% code fullWidth="true" %}
-```cpp
-class ConcreteProduct1 : public Product
-{
-public:
-      virtual ~ConcreteProduct1() override 
-      {
-            cout << "Destructor;" << endl; 
-      }
-      
-      virtual void run() override 
-      { 
-            cout << "Method run;" << endl;
-      }
-      
-      unique_ptr<Creator> createConcreteCreator()
-      {
-            return unique_ptr<Creator>(new ConcreteCreator<ConcreteProduct1>());
-      }
+    virtual ~Car() = default;
+    virtual void run() = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="Solution" %}
+{% tab title="Audi" %}
+{% code fullWidth="true" %}
+```cpp
+class Audi : public Car
+{
+public:
+    Audi() 
+    { 
+        cout << "Calling the Audi constructor;" << endl; 
+    }
+    
+    ~Audi() override 
+    { 
+        cout << "Calling the Audi destructor;" << endl; 
+    }
+
+    void run() override 
+    { 
+        cout << "Calling the run method Audi;" << endl; 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Bmw" %}
+{% code fullWidth="true" %}
+```cpp
+class Bmw : public Car
+{
+public:
+    Bmw() 
+    { 
+        cout << "Calling the Bmw constructor;" << endl; 
+    }
+    
+    ~Bmw() override 
+    { 
+        cout << "Calling the Bmw destructor;" << endl; 
+    }
+
+    void run() override 
+    { 
+        cout << "Calling the run method Bmw;" << endl; 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Concepts" %}
+{% code fullWidth="true" %}
+```cpp
+template <typename Derived, typename Base>
+concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
+
+template <typename Type>
+concept NotAbstract = !is_abstract_v<Type>;
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="CarMaker" %}
+{% code fullWidth="true" %}
+```cpp
+class CarMaker
+{
+public:
+    virtual ~CarMaker() = default;
+    virtual unique_ptr<Car> createCar() = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="ConcreteCarMaker" %}
+{% code fullWidth="true" %}
+```cpp
+template <Derivative<Car> Tprod>
+requires NotAbstract<Tprod>
+class ConcreteCarMaker : public CarMaker
+{
+public:
+    unique_ptr<Car> createCar() override 
+    {
+        return make_unique<Tprod>();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="CrCarMaker" %}
+{% code fullWidth="true" %}
+```cpp
+class CrCarMaker
+{
+public:
+    template <Derivative<Product> Tprod>
+    NotAbstract<Tprod>
+    static unique_ptr<CarMaker> createConcreteCarMaker() 
+    {
+        return make_unique<ConcreteCarMaker<Tprod>>();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="CarUser" %}
+{% code fullWidth="true" %}
+```cpp
+class CarUser
+{
+public:
+    void use(shared_ptr<CarMaker>& cr)
+    {
+        if (!cr) throw runtime_error("The creator is missing!");
+
+        shared_ptr<Car> ptr = cr->createCar();
+        ptr->run();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
 {% hint style="info" %}
-Класс Solution предоставляет метод для регистрации в данном случае Creator'ов для карты (map), состоящий из пар (pair): ключ + значение.
+Класс Solution выполняет роль посредника между клиентским кодом и классами создателей продуктов. Он отвечает за регистрацию методов создания объектов для каждого типа продукта и предоставляет методы для создания объектов по их идентификаторам.
 {% endhint %}
 
+{% tabs %}
+{% tab title="Solution" %}
 {% code fullWidth="true" %}
 ```cpp
 class Solution
 {
 public:
-      typedef unique_ptr<Creator> (*CreateCreator)();
- 
-      bool registration(size_t id, CreateCreator createfun)
-      {
-            return callbacks.insert(CallBackMap::value_type(id, createfun)).second;
-      }
-      
-      bool check(size_t id) 
-      { 
-            return callbacks.erase(id) == 1; 
-      }
+    using CreateCarMaker = unique_ptr<CarMaker>(&)();
+    using CallBackMap = map<size_t, CreateCarMaker>;
 
-      unique_ptr<Creator> create(size_t id)
-      {
-            CallBackMap::const_iterator it = callbacks.find(id);
- 
-            if (it == callbacks.end())
-            {
-//                throw IdError();
-            }
-            return unique_ptr<Creator>((it->second)());
-      }
+public:
+    Solution() = default;
+    Solution(initializer_list<pair<size_t, CreateCarMaker>> list);
+
+    bool registration(size_t id, CreateCarMaker createfun);
+    bool check(size_t id) 
+    { 
+        return callbacks.erase(id) == 1; 
+    }
+
+    unique_ptr<CarMaker> create(size_t id);
+
 private:
-      using CallBackMap = map<size_t, CreateCreator>;
-      
-      CallBackMap callbacks;
+    CallBackMap callbacks;
 };
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Methods" %}
+{% code fullWidth="true" %}
+```cpp
+# pragma region Solution
+Solution::Solution(initializer_list<pair<size_t, CreateCarMaker>> list)
+{
+    for (auto&& elem : list)
+        this->registration(elem.first, elem.second);
+}
+
+bool Solution::registration(size_t id, CreateCarMaker createfun)
+{
+    return callbacks.insert(CallBackMap::value_type(id, createfun)).second;
+}
+
+unique_ptr<CarMaker> Solution::create(size_t id)
+{
+    CallBackMap::const_iterator it = callbacks.find(id);
+
+    return it != callbacks.end() ? unique_ptr<CarMaker>(it->second()) : nullptr;
+}
+
+shared_ptr<Solution> make_solution(initializer_list<pair<size_t, Solution::CreateCarMaker>> list)
+{
+    return shared_ptr<Solution>(new Solution(list));
+}
+# pragma endregion
 ```
 {% endcode %}
 {% endtab %}
@@ -124,19 +215,33 @@ private:
 
 {% code lineNumbers="true" fullWidth="true" %}
 ```cpp
-# include <iostream> 
-# include <memory> 
-# include <map> 
+# include <iostream>
+# include <initializer_list>
+# include <memory>
+# include <map>
+# include <exception>
 
-using namespace std; 
+using namespace std;
 
 int main()
 {
-      Solution solution;
-      solution.registration(1, createConcreteCreator);
-      shared_ptr<Creator> cr(solution.create(1));
-      shared_ptr<Product> ptr = cr->createProduct();
-      ptr->run();
+    try
+    {
+        shared_ptr<Solution> solution
+        CrCarMaker::createConcreteCarMaker<Audi>} });
+
+        if (!solution->registration(2, CrCarMaker::createConcreteCarMaker<Bmw>))
+        {
+            throw runtime_error("Error registration!");
+        }
+        shared_ptr<CarMaker> cr(solution->create(2));
+
+        User{}.use(cr);
+    }
+    catch (runtime_error& err)
+    {
+        cout << err.what() << endl;
+    }
 }
 ```
 {% endcode %}
