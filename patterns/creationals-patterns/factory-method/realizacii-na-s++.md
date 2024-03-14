@@ -20,50 +20,50 @@ public:
 {% endcode %}
 {% endtab %}
 
-{% tab title="Audi" %}
+{% tab title="Sedan" %}
 {% code fullWidth="true" %}
 ```cpp
-class Audi : public Car
+class Sedan : public Car
 {
 public:
-    Audi() 
+    Sedan() 
     { 
-        cout << "Calling the Audi constructor;" << endl; 
+        cout << "Sedan constructor called" << endl; 
     }
     
-    ~Audi() override 
+    ~Sedan() override 
     { 
-        cout << "Calling the Audi destructor;" << endl; 
+        cout << "Sedan destructor called" << endl; 
     }
 
-    void run() override 
+    void drive() override 
     { 
-        cout << "Calling the run method Audi;" << endl; 
+        cout << "Driving sedan" << endl; 
     }
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="Bmw" %}
+{% tab title="SUV" %}
 {% code fullWidth="true" %}
 ```cpp
-class Bmw : public Car
+class SUV : public Car 
 {
 public:
-    Bmw() 
-    { 
-        cout << "Calling the Bmw constructor;" << endl; 
+    SUV() 
+    {
+        cout << "Calling the SUV constructor;" << endl;
     }
     
-    ~Bmw() override 
+    ~SUV() override 
     { 
-        cout << "Calling the Bmw destructor;" << endl; 
+        cout << "Calling the SUV destructor;" << endl; 
     }
 
-    void run() override 
+    void drive() override 
     { 
-        cout << "Calling the run method Bmw;" << endl; 
+        cout << "Driving SUV;" << endl; 
     }
 };
 ```
@@ -82,65 +82,65 @@ concept NotAbstract = !is_abstract_v<Type>;
 {% endcode %}
 {% endtab %}
 
-{% tab title="CarMaker" %}
+{% tab title="CarFactory" %}
 {% code fullWidth="true" %}
 ```cpp
-class CarMaker
+class CarFactory
 {
 public:
-    virtual ~CarMaker() = default;
+    virtual ~CarFactory() = default;
     virtual unique_ptr<Car> createCar() = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="ConcreteCarMaker" %}
+{% tab title="ConcreteCarFactory" %}
 {% code fullWidth="true" %}
 ```cpp
-template <Derivative<Car> Tprod>
-requires NotAbstract<Tprod>
-class ConcreteCarMaker : public CarMaker
+template <Derivative<Car> TCar>
+requires NotAbstract<TCar>
+class ConcreteCarFactory : public CarFactory
 {
 public:
     unique_ptr<Car> createCar() override 
     {
-        return make_unique<Tprod>();
+        return make_unique<TCar>();
     }
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="CrCarMaker" %}
+{% tab title="CarFactoryMaker" %}
 {% code fullWidth="true" %}
 ```cpp
-class CrCarMaker
+class CarFactoryMaker
 {
 public:
-    template <Derivative<Product> Tprod>
-    NotAbstract<Tprod>
-    static unique_ptr<CarMaker> createConcreteCarMaker() 
+    template <Derivative<Car> TCar>
+    NotAbstract<TCar>
+    static unique_ptr<CarFactory> createCarFactory() 
     {
-        return make_unique<ConcreteCarMaker<Tprod>>();
+        return make_unique<ConcreteCarFactory<TCar>>();
     }
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="CarUser" %}
+{% tab title="User" %}
 {% code fullWidth="true" %}
 ```cpp
-class CarUser
+class User
 {
 public:
-    void use(shared_ptr<CarMaker>& cr)
+    void use(shared_ptr<CarFactory>& factory)
     {
-        if (!cr) throw runtime_error("The creator is missing!");
+        if (!factory) throw runtime_error("The creator is missing!");
 
-        shared_ptr<Car> ptr = cr->createCar();
-        ptr->run();
+        shared_ptr<Car> car = factory->createCar();
+        car->drive();
     }
 };
 ```
@@ -153,26 +153,26 @@ public:
 {% endhint %}
 
 {% tabs %}
-{% tab title="Solution" %}
+{% tab title="VehicleSolution" %}
 {% code fullWidth="true" %}
 ```cpp
-class Solution
+class VehicleSolution
 {
 public:
-    using CreateCarMaker = unique_ptr<CarMaker>(&)();
-    using CallBackMap = map<size_t, CreateCarMaker>;
+    using CreateCarMaker = unique_ptr<CarFactory>(&)();
+    using CallBackMap = map<size_t, CreateCarFactory>;
 
 public:
-    Solution() = default;
-    Solution(initializer_list<pair<size_t, CreateCarMaker>> list);
+    VehicleSolution() = default;
+    VehicleSolution(initializer_list<pair<size_t, CreateCarFactory>> list);
 
-    bool registration(size_t id, CreateCarMaker createfun);
+    bool registration(size_t id, CreateCarFactory createfun);
     bool check(size_t id) 
     { 
         return callbacks.erase(id) == 1; 
     }
 
-    unique_ptr<CarMaker> create(size_t id);
+    unique_ptr<CarFactory> create(size_t id);
 
 private:
     CallBackMap callbacks;
@@ -185,27 +185,27 @@ private:
 {% code fullWidth="true" %}
 ```cpp
 # pragma region Solution
-Solution::Solution(initializer_list<pair<size_t, CreateCarMaker>> list)
+VehicleSolution::VehicleSolution(initializer_list<pair<size_t, CreateCarFactory>> list)
 {
     for (auto&& elem : list)
         this->registration(elem.first, elem.second);
 }
 
-bool Solution::registration(size_t id, CreateCarMaker createfun)
+bool VehicleSolution::registration(size_t id, CreateCarFactory createfun)
 {
     return callbacks.insert(CallBackMap::value_type(id, createfun)).second;
 }
 
-unique_ptr<CarMaker> Solution::create(size_t id)
+unique_ptr<CarFactory> VehicleSolution::create(size_t id)
 {
     CallBackMap::const_iterator it = callbacks.find(id);
 
-    return it != callbacks.end() ? unique_ptr<CarMaker>(it->second()) : nullptr;
+    return it != callbacks.end() ? unique_ptr<CarFactory>(it->second()) : nullptr;
 }
 
-shared_ptr<Solution> make_solution(initializer_list<pair<size_t, Solution::CreateCarMaker>> list)
+shared_ptr<VehicleSolution> make_solution(initializer_list<pair<size_t, VehicleSolution::CreateCarFactory>> list)
 {
-    return shared_ptr<Solution>(new Solution(list));
+    return shared_ptr<VehicleSolution>(new VehicleSolution(list));
 }
 # pragma endregion
 ```
@@ -227,14 +227,14 @@ int main()
 {
     try
     {
-        shared_ptr<Solution> solution
-        CrCarMaker::createConcreteCarMaker<Audi>} });
+        shared_ptr<VehicleSolution> solution
+        CarFactoryMaker::createCarFactory<Sedan>} });
 
-        if (!solution->registration(2, CrCarMaker::createConcreteCarMaker<Bmw>))
+        if (!solution->registration(2, CarFactoryMaker::createCarFactory<SUV>))
         {
             throw runtime_error("Error registration!");
         }
-        shared_ptr<CarMaker> cr(solution->create(2));
+        shared_ptr<CarFactory> cr(solution->create(2));
 
         User{}.use(cr);
     }
