@@ -27,7 +27,7 @@ class Car
 {
 public:
     virtual ~Car() = default;  
-    virtual void run() = 0;
+    virtual void drive() = 0;
 };
 ```
 {% endcode %}
@@ -408,11 +408,11 @@ public:
 class Sedan : public Car
 {
 private:
-	int count;
-	double price;
+	int seats;
+	double weight;
 	
 public:
-    Sedan(int c, double p) : count(c), price(p)
+    Sedan(int seats_t, double weight_t) : seats(c), weight(p)
     { 
         cout << "Sedan constructor called" << endl; 
     }
@@ -437,7 +437,7 @@ public:
 class SUV : public Car 
 {
 public:
-    SUV(int c, double p) 
+    SUV(int seats_t, double weight_t) 
     {
         cout << "Calling the SUV constructor;" << endl;
     }
@@ -500,31 +500,31 @@ concept Constructible = is_constructible_v<Type, Args...>;
 {% endcode %}
 {% endtab %}
 
-{% tab title="BaseCarFactory" %}
+{% tab title="BaseFactory" %}
 {% code fullWidth="true" %}
 ```cpp
 template <Abstract Tbase, typename... Args>
-class BaseCarFactory
+class BaseFactory
 {
 public:
-    virtual ~BaseCarFactory() = default;
+    virtual ~BaseFactory() = default;
     virtual unique_ptr<Tbase> create(Args&& ...args) = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="CarFactory" %}
+{% tab title="Factory" %}
 {% code fullWidth="true" %}
 ```cpp
 template <typename Tbase, typename TCar, typename... Args>
-requires NotAbstract<TCar>&& Derivative<TCar, Tbase>&& Constructible<TCar, Args...>
-class CarFactory : public BaseCreator<Tbase, Args...>
+requires NotAbstract<Tprod>&& Derivative<Tprod, Tbase>&& Constructible<Tprod, Args...>
+class Factory : public BaseFactory<Tbase, Args...>
 {
 public:
     unique_ptr<Tbase> create(Args&& ...args) override
     {
-        return make_unique<TCar>(forward<Args>(args)...);
+        return make_unique<Tprod>(forward<Args>(args)...);
     }
 };
 ```
@@ -534,7 +534,7 @@ public:
 {% tab title="User" %}
 {% code fullWidth="true" %}
 ```cpp
-using BaseCarFactory_t = BaseCarFactory<Car, int, double>;
+using BaseCarFactory_t = BaseFactory<Car, int, double>;
 
 class User
 {
@@ -559,9 +559,9 @@ using namespace std;
 
 int main()
 {
-    shared_ptr<BaseCarFactory_t> factory = make_shared<CarCreator<Car, Sedan, int, double>>();
+    shared_ptr<BaseCarFactory_t> factory = make_shared<Factory<Car, Sedan, int, double>>();
     unique_ptr<User> user = make_unique<User>();
-    user->use(fac tory);
+    user->use(factory);
 }
 ```
 {% endcode %}

@@ -14,7 +14,7 @@ class Car
 {
 public:
     virtual ~Car() = default;
-    virtual void run() = 0;
+    virtual void drive() = 0;
 };
 ```
 {% endcode %}
