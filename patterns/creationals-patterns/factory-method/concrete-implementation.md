@@ -13,7 +13,7 @@ layout:
     visible: true
 ---
 
-# Возможные реализации для решения конкретных задач
+# Возможные реализации для решения конкретных задач на С++
 
 ## Фабричный метод с созданием нового объекта
 
@@ -33,22 +33,25 @@ public:
 {% endcode %}
 {% endtab %}
 
-{% tab title="Audi" %}
+{% tab title="Sedan" %}
 {% code fullWidth="true" %}
 ```cpp
-class Audi : public Car
+class Sedan : public Car
 {
 public:
-    Audi() { 
-        cout << "Calling the Audi constructor;" << endl; 
+    Sedan() 
+    { 
+        cout << "Sedan constructor called" << endl; 
     }
     
-    ~Audi() override { 
-        cout << "Calling the Audi destructor;" << endl; 
+    ~Sedan() override 
+    { 
+        cout << "Sedan destructor called" << endl; 
     }
-    
-    void run() override { 
-        cout << "Calling the run method;" << endl;
+
+    void drive() override 
+    { 
+        cout << "Driving sedan" << endl; 
     }
 };
 ```
@@ -65,130 +68,30 @@ concept NotAbstract = !is_abstract_v<Type>;
 ```
 {% endtab %}
 
-{% tab title="CarMaker" %}
+{% tab title="CarFactory" %}
 {% code fullWidth="true" %}
 ```cpp
-class CarMaker
+class CarFactory
 {
 public:
-    virtual ~CarMaker() = default;
+    virtual ~CarFactory() = default;
     virtual unique_ptr<Car> create() = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="AudiMaker" %}
+{% tab title="ConcreteCarFactory" %}
 {% code fullWidth="true" %}
 ```cpp
-template <Derivative<Car> Tprod>
-requires NotAbstract<Tprod>
-class AudiMaker : public CarMaker
+template <Derivative<Car> TCar>
+requires NotAbstract<TCar>
+class ConcreteCarFactory : public CarFactory
 {
 public:
-	unique_ptr<Car> create() override
-	{
-		return make_unique<Tprod>();
-	}
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="CarUser" %}
-{% code fullWidth="true" %}
-```cpp
-class CarUser
-{
-public:
-	void use(shared_ptr<CarMaker>& cr)
-	{
-		shared_ptr<Car> ptr = cr->create();
-		ptr->run();
-	}
-};
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
-
-{% code fullWidth="true" %}
-```cpp
-# include <iostream>
-# include <memory>
-
-using namespace std;
-
-int main()
-{
-	shared_ptr<CarMaker> cr = make_shared<AudiMaker<Audi>>();
-	CarUser{}.use(cr);
-}
-```
-{% endcode %}
-
-## Фабричный метод с шаблонным CarMaker
-
-{% tabs %}
-{% tab title="Product" %}
-{% code fullWidth="true" %}
-```cpp
-class Product
-{
-public:
-    virtual ~Product() = default;
-    virtual void run() = 0;
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="ConProd1" %}
-{% code fullWidth="true" %}
-```cpp
-class ConProd1 : public Product
-{
-public:
-    ConProd1() 
-    { 
-        cout << "Calling the ConProd1 constructor;" << endl; 
-    }
-    
-    ~ConProd1() override 
-    { 
-        cout << "Calling the ConProd1 destructor;" << endl;
-    }
-
-    void run() override 
-    { 
-        cout << "Calling the run method;" << endl; 
-    }
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Concepts" %}
-```cpp
-template <typename Derived, typename Base>
-concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
-
-template <typename Type>
-concept NotAbstract = !is_abstract_v<Type>;
-```
-{% endtab %}
-
-{% tab title="Creator" %}
-{% code fullWidth="true" %}
-```cpp
-template <Derivative<Product> Tprod>
-requires NotAbstract<Tprod>
-class Creator
-{
-public:
-    unique_ptr<Product> create()
+    unique_ptr<Car> create() override
     {
-        return make_unique<Tprod>();
+        return make_unique<TCar>();
     }
 };
 ```
@@ -201,9 +104,105 @@ public:
 class User
 {
 public:
-    template<NotAbstract Tprod>
-    requires Derivative<Tprod, Product>
-    void use(shared_ptr<Creator<Tprod>> cr);
+    void use(shared_ptr<CarFactory>& factory)
+    {
+        shared_ptr<Car> car = factory->create();
+        car->drive();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+{% code fullWidth="true" %}
+```cpp
+int main()
+{
+	shared_ptr<CarFactory> factory = make_shared<ConcreteCarFactory<Sedan>>();
+	
+	User{}.use(factory);
+}
+```
+{% endcode %}
+
+## Фабричный метод с шаблонным CarFactory
+
+{% tabs %}
+{% tab title="Car" %}
+{% code fullWidth="true" %}
+```cpp
+class Car
+{
+public:
+    virtual ~Car() = default;
+    virtual void drive() = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Sedan" %}
+{% code fullWidth="true" %}
+```cpp
+class Sedan : public Car
+{
+public:
+    Sedan() 
+    { 
+        cout << "Sedan constructor called" << endl; 
+    }
+    
+    ~Sedan() override 
+    { 
+        cout << "Sedan destructor called" << endl; 
+    }
+
+    void drive() override 
+    { 
+        cout << "Driving sedan" << endl; 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Concepts" %}
+```cpp
+template <typename Derived, typename Base>
+concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
+
+template <typename Type>
+concept NotAbstract = !is_abstract_v<Type>;
+```
+{% endtab %}
+
+{% tab title="CarFactory" %}
+{% code fullWidth="true" %}
+```cpp
+template <Derivative<Car> TCar>
+requires NotAbstract<TCar>
+class CarFactory
+{
+public:
+    unique_ptr<Car> create()
+    {
+        return make_unique<TCar>();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+class User
+{
+public:
+    template<NotAbstract TCar>
+    requires Derivative<TCar, Car>
+    void use(shared_ptr<CarFactory<TCar>> factory);
 };
 ```
 {% endcode %}
@@ -212,12 +211,12 @@ public:
 {% tab title="Method User" %}
 {% code fullWidth="true" %}
 ```cpp
-template<NotAbstract Tprod>
-requires Derivative<Tprod, Product>
-void User::use(shared_ptr<Creator<Tprod>> cr)
+template<NotAbstract TCar>
+requires Derivative<TCar, Car>
+void User::use(shared_ptr<CarFactory<TCar>> factory)
 {
-    shared_ptr<Product> ptr = cr->create();
-    ptr->run();
+    shared_ptr<Car> car = factory->create();
+    car->drive();
 }
 ```
 {% endcode %}
@@ -233,12 +232,12 @@ using namespace std;
 
 int main()
 {
-    using CreatorProd1_t = Creator<ConProd1>;
-    shared_ptr<CreatorProd1_t> cr = make_shared<CreatorProd1_t>();
+	using SedanFactory_t = CarFactory<Sedan>;
+  	shared_ptr<SedanFactory_t> sedanFactory = make_shared<SedanFactory_t>();
 
-    unique_ptr<User> us = make_unique<User>();
-
-    us->use(cr);
+	unique_ptr<User> user = make_unique<User>();
+	
+	user->use(sedanFactory);
 }
 ```
 {% endcode %}
@@ -246,37 +245,38 @@ int main()
 ## Фабричный метод без повторного создания объектов. Идиома NVI (Non-Virtual Interface).
 
 {% tabs %}
-{% tab title="Product" %}
+{% tab title="Car" %}
 {% code fullWidth="true" %}
 ```cpp
-class Product
+class Car
 {
 public:
-    virtual ~Product() = default;
-    virtual void run() = 0;
+    virtual ~Car() = default;
+    virtual void drive() = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="ConProd1" %}
+{% tab title="Sedan" %}
 {% code fullWidth="true" %}
 ```cpp
-class ConProd1 : public Product
+class Sedan : public Car
 {
 public:
-    ConProd1() 
+    Sedan() 
     { 
-        cout << "Calling the ConProd1 constructor;" << endl; 
+        cout << "Sedan constructor called" << endl; 
     }
-    ~ConProd1() override 
+    
+    ~Sedan() override 
     { 
-        cout << "Calling the ConProd1 destructor;" << endl; 
+        cout << "Sedan destructor called" << endl; 
     }
 
-    void run() override 
+    void drive() override 
     { 
-        cout << "Calling the run method;" << endl; 
+        cout << "Driving sedan" << endl; 
     }
 };
 ```
@@ -295,55 +295,58 @@ concept NotAbstract = !is_abstract_v<Type>;
 {% endcode %}
 {% endtab %}
 
-{% tab title="Creator" %}
+{% tab title="CarFactory" %}
 {% code fullWidth="true" %}
 ```cpp
-class Creator
+class CarFactory
 {
 public:
-    virtual ~Creator() = default;
-    shared_ptr<Product> getProduct();
+    virtual ~CarFactory() = default;
+
+    shared_ptr<Car> getCar();
 
 protected:
-    virtual shared_ptr<Product> createProduct() = 0;
+    virtual shared_ptr<Car> createCar() = 0;
 
 private:
-    shared_ptr<Product> product{ nullptr };
+    shared_ptr<Car> car{ nullptr };
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="ConCreator" %}
+{% tab title="ConcreteCarFactory" %}
 {% code fullWidth="true" %}
 ```cpp
-template <Derivative<Product> Tprod>
-requires NotAbstract<Tprod>
-class ConCreator : public Creator
+template <Derivative<Car> TCar>
+requires NotAbstract<TCar>
+class ConcreteCarFactory : public CarFactory
 {
 protected:
-    shared_ptr<Product> createProduct() override
+    shared_ptr<Car> createCar() override
     {
-        return  make_shared<Tprod>();
+        return make_shared<TCar>();
     }
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="Method Creator" %}
+{% tab title="Method CarFactory" %}
 {% code fullWidth="true" %}
 ```cpp
-# pragma region Method Creator
-shared_ptr<Product> Creator::getProduct()
+# pragma region Method CarFactory
+
+shared_ptr<Car> CarFactory::getCar()
 {
-    if (!product)
+    if (!car)
     {
-        product = createProduct();
+        car = createCar();
     }
 
-    return product;
+    return car;
 }
+
 # pragma endregion
 ```
 {% endcode %}
@@ -355,13 +358,13 @@ shared_ptr<Product> Creator::getProduct()
 class User
 {
 public:
-    void use(shared_ptr<Creator>& cr)
+    void use(shared_ptr<CarFactory>& factory)
     {
-        shared_ptr<Product> ptr1 = cr->getProduct();
-        shared_ptr<Product> ptr2 = cr->getProduct();
-    
-        cout << "use count = " << ptr1.use_count() << endl;
-        ptr1->run();
+        shared_ptr<Car> car1 = factory->getCar();
+        shared_ptr<Car> car2 = factory->getCar();
+
+        cout << "use count = " << car1.use_count() << endl;
+        car1->drive();
     }
 };
 ```
@@ -371,16 +374,14 @@ public:
 
 {% code fullWidth="true" %}
 ```cpp
-# include <iostream>
-# include <memory>
-
-using namespace std;
-
 int main()
 {
-    shared_ptr<Creator> cr = make_shared<ConCreator<ConProd1>>();
-    unique_ptr<User> us = make_unique<User>();
-    us->use(cr);
+    shared_ptr<CarFactory> factory = make_shared<ConcreteCarFactory<Sedan>>();
+
+    unique_ptr<User> user = make_unique<User>();
+    user->use(factory);
+
+    return 0;
 }
 ```
 {% endcode %}
@@ -388,66 +389,67 @@ int main()
 ## Фабричный метод с шаблонным базовым классом CarMaker
 
 {% tabs %}
-{% tab title="Product" %}
+{% tab title="Car" %}
 {% code fullWidth="true" %}
 ```cpp
-class Product
+class Car
 {
 public:
-    virtual ~Product() = default;
-    virtual void run() = 0;
+    virtual ~Car() = default;
+    virtual void drive() = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="ConProd1" %}
+{% tab title="Sedan" %}
 {% code fullWidth="true" %}
 ```cpp
-class ConProd1 : public Product
+class Sedan : public Car
 {
 private:
-    int count;
-    double price;
+	int count;
+	double price;
+	
 public:
-    ConProd1(int c, double p) : count(c), price(p)
-    {
-        cout << "Calling the ConProd1 constructor;" << endl;
+    Sedan(int c, double p) : count(c), price(p)
+    { 
+        cout << "Sedan constructor called" << endl; 
     }
     
-    ~ConProd1() override 
+    ~Sedan() override 
     { 
-        cout << "Calling the ConProd1 destructor;" << endl; 
+        cout << "Sedan destructor called" << endl; 
     }
 
-    void run() override 
+    void drive() override 
     { 
-        cout << "Count = " << count << "; Price = " << price << endl; 
+        cout << "Driving sedan" << endl; 
     }
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="ConProd2" %}
+{% tab title="SUV" %}
 {% code fullWidth="true" %}
 ```cpp
-class ConProd2// : public Product
+class SUV : public Car 
 {
 public:
-    ConProd2(int c, double p)
+    SUV(int c, double p) 
     {
-        cout << "Calling the ConProd2 constructor;" << endl;
+        cout << "Calling the SUV constructor;" << endl;
     }
     
-    virtual ~ConProd2() 
+    ~SUV() override 
     { 
-        cout << "Calling the ConProd2 destructor;" << endl; 
+        cout << "Calling the SUV destructor;" << endl; 
     }
-    
-    virtual void run() 
+
+    void drive() override 
     { 
-        cout << "Calling the run method ConProd2;" << endl; 
+        cout << "Driving SUV;" << endl; 
     }
 };
 ```
@@ -467,7 +469,7 @@ concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
 ```
 {% endtab %}
 
-{% tab title="Variants of the concept Constructible" %}
+{% tab title="Constructible" %}
 {% code fullWidth="true" %}
 ```cpp
 # pragma region Variants of the concept Constructible
@@ -498,31 +500,31 @@ concept Constructible = is_constructible_v<Type, Args...>;
 {% endcode %}
 {% endtab %}
 
-{% tab title="BaseCreator" %}
+{% tab title="BaseCarFactory" %}
 {% code fullWidth="true" %}
 ```cpp
 template <Abstract Tbase, typename... Args>
-class BaseCreator
+class BaseCarFactory
 {
 public:
-    virtual ~BaseCreator() = default;
+    virtual ~BaseCarFactory() = default;
     virtual unique_ptr<Tbase> create(Args&& ...args) = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="Creator" %}
+{% tab title="CarFactory" %}
 {% code fullWidth="true" %}
 ```cpp
-template <typename Tbase, typename Tprod, typename... Args>
-requires NotAbstract<Tprod>&& Derivative<Tprod, Tbase>&& Constructible<Tprod, Args...>
-class Creator : public BaseCreator<Tbase, Args...>
+template <typename Tbase, typename TCar, typename... Args>
+requires NotAbstract<TCar>&& Derivative<TCar, Tbase>&& Constructible<TCar, Args...>
+class CarFactory : public BaseCreator<Tbase, Args...>
 {
 public:
     unique_ptr<Tbase> create(Args&& ...args) override
     {
-        return make_unique<Tprod>(forward<Args>(args)...);
+        return make_unique<TCar>(forward<Args>(args)...);
     }
 };
 ```
@@ -532,15 +534,15 @@ public:
 {% tab title="User" %}
 {% code fullWidth="true" %}
 ```cpp
-using BaseCreator_t = BaseCreator<Product, int, double>;
+using BaseCarFactory_t = BaseCarFactory<Car, int, double>;
 
 class User
 {
 public:
-    void use(shared_ptr<BaseCreator_t>& cr)
+    void use(shared_ptr<BaseCarFactory_t>& factory)
     {
-        shared_ptr<Product> ptr = cr->create(1, 100.);
-        ptr->run();
+        shared_ptr<Car> car = factory->create(1, 100.);
+        car->drive();
     }
 };
 ```
@@ -557,52 +559,52 @@ using namespace std;
 
 int main()
 {
-    shared_ptr<BaseCreator_t> cr = make_shared<Creator<Product, ConProd1, int, double>>();
-    unique_ptr<User> us = make_unique<User>();
-    us->use(cr);
+    shared_ptr<BaseCarFactory_t> factory = make_shared<CarCreator<Car, Sedan, int, double>>();
+    unique_ptr<User> user = make_unique<User>();
+    user->use(fac tory);
 }
 ```
 {% endcode %}
 
-## Фабричный метод и статический полиморфизм
+## Фабричный метод и "Cтатический полиморфизм" (CRTP)
 
 {% hint style="info" %}
 Статический полиморфизм (compile-time polymorphism) - это механизм, который позволяет вызывать различные функции или методы с одним и тем же именем, но с разными параметрами или типами данных. Это достигается с помощью перегрузки функций или методов. Компилятор статически выбирает соответствующую функцию или метод на основе типов параметров, указанных при вызове.
 {% endhint %}
 
 {% tabs %}
-{% tab title="Product" %}
+{% tab title="Car" %}
 {% code fullWidth="true" %}
 ```cpp
-class Product
+class Car
 {
 public:
-    virtual ~Product() = default;
-    virtual void run() = 0;
+    virtual ~Car() = default;
+    virtual void drive() = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="ConProd1" %}
+{% tab title="Sedan" %}
 {% code fullWidth="true" %}
 ```cpp
-class ConProd1 : public Product
+class Sedan : public Car
 {
 public:
-    ConProd1() 
+    Sedan() 
     { 
-        cout << "Calling the ConProd1 constructor;" << endl; 
+        cout << "Sedan constructor called" << endl; 
     }
     
-    ~ConProd1() override 
+    ~Sedan() override 
     { 
-        cout << "Calling the ConProd1 destructor;" << endl; 
+        cout << "Sedan destructor called" << endl; 
     }
 
-    void run() override 
+    void drive() override 
     { 
-        cout << "Calling the run method;" << endl; 
+        cout << "Driving sedan" << endl; 
     }
 };
 ```
@@ -619,11 +621,11 @@ concept NotAbstract = !is_abstract_v<Type>;
 ```
 {% endtab %}
 
-{% tab title="Creator" %}
+{% tab title="Factory" %}
 {% code fullWidth="true" %}
 ```cpp
 template <typename Tcrt>
-class Creator
+class Factory
 {
 public:
     auto create() const
@@ -635,17 +637,17 @@ public:
 {% endcode %}
 {% endtab %}
 
-{% tab title="ProductCreator" %}
+{% tab title="CarFactory" %}
 {% code fullWidth="true" %}
 ```cpp
-template <Derivative<Product> Tprod>
-requires NotAbstract<Tprod>
-class ProductCreator : public Creator<ProductCreator<Tprod>>
+template <Derivative<Car> TCar>
+requires NotAbstract<TCar>
+class CarFactory : public Factory<CarFactory<TCar>>
 {
 public:
-    unique_ptr<Product> create_impl() const
+    unique_ptr<Car> create_impl() const
     {
-        return make_unique<Tprod>();
+        return make_unique<TCar>();
     }
 };
 ```
@@ -658,11 +660,11 @@ public:
 class User
 {
 public:
-    template<Derivative<Product> Tprod>
-    void use(Creator<ProductCreator<Tprod>>& cr) requires NotAbstract<Tprod>
+    template<Derivative<Car> TCar>
+    void use(Factory<CarFactory<TCar>>& factory) requires NotAbstract<TCar>
     {
-        auto product = cr.create();
-        product->run();
+        auto car = factory.create();
+        car->drive();
     }
 };
 ```
@@ -679,8 +681,8 @@ using namespace std;
 
 int main()
 {
-    Creator<ProductCreator<ConProd1>> cr;
-    User{}.use(cr);
+    factory<CarFactory<Sedan>> factory;
+    User{}.use(factory);
 }
 ```
 {% endcode %}
