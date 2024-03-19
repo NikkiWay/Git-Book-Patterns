@@ -379,6 +379,11 @@ public:
 
 {% code fullWidth="true" %}
 ```cpp
+# include <iostream>
+# include <memory>
+
+using namespace std;
+
 int main()
 {
     shared_ptr<CarFactory> factory = make_shared<ConcreteCarFactory<Sedan>>();
