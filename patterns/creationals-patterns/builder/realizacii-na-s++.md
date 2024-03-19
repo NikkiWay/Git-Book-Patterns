@@ -7,109 +7,171 @@ description: Builder
 ## Общая реализация на языке С++
 
 {% tabs %}
-{% tab title="Product" %}
+{% tab title="Car" %}
 {% code fullWidth="true" %}
 ```cpp
-class Product
+class Car
 {
 public:
-	Product() 
+	virtual ~Car() = default;
+	virtual void drive() = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Sedan" %}
+{% code fullWidth="true" %}
+```cpp
+class Sedan : public Car
+{
+public:
+	Sedan() 
 	{ 
-		cout << "Calling the ConProd1 constructor;" << endl; 
+		cout << "Calling the Sedan constructor;" << endl; 
 	}
 	
-	~Product()
+	~Sedan() override 
 	{ 
-		cout << "Calling the ConProd1 destructor;" << endl; 
+		cout << "Calling the Sedan destructor;" << endl; 
 	}
-	
-	void run() 
+
+	void drive() override 
 	{ 
-		cout << "Calling the run method;" << endl; 
+		cout << "Calling the drive method;" << endl; 
 	}
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="Builder" %}
+{% tab title="CarBuilder" %}
 {% code fullWidth="true" %}
 ```cpp
-class Builder
+class CarBuilder
 {
 public:
-	virtual bool buildPart1() = 0;
-	virtual bool buildPart2() = 0;
+	virtual ~CarBuilder() = default;
 
-	shared_ptr<Product> getProduct();
+	virtual bool buildEngine() = 0;
+	virtual bool buildChassis() = 0;
 
-protected:
-	virtual shared_ptr<Product> createProduct() = 0;
-
-	shared_ptr<Product> product;
-};
-
-shared_ptr<Product> Builder::getProduct()
-{
-	if (!product) 
-	{ 
-		product = createProduct(); 
-	}
-	return product;
-}
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="ConcreteBuilder" %}
-{% code fullWidth="true" %}
-```cpp
-class ConcreteBuilder : public Builder
-{
-public:
-	virtual bool buildPart1() override
-	{ 
-		cout << "Completed part: " << ++part << ";" << endl;
-		return true;
-	}
-	
-	virtual bool buildPart2() override
-	{ 
-		cout << "Completed part: " << ++part << ";" << endl;
-		return true;
-	}
+	shared_ptr<Car> getCar();
 
 protected:
-	virtual shared_ptr<Product> createProduct() override;
+	virtual shared_ptr<Car> createCar() = 0;
 
-private:
+	shared_ptr<Car> car{ nullptr };
 	size_t part{ 0 };
 };
-
-shared_ptr<Product> ConcreteBuilder::createProduct()
-{
-	if (part == 2) 
-	{ 
-		product = make_shared<Product>(); 
-	}
-	return product;
-}
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="Director" %}
+{% tab title="SedanBuilder" %}
 {% code fullWidth="true" %}
 ```cpp
-class Director
+class SedanBuilder : public CarBuilder
 {
 public:
-	shared_ptr<Product> create(shared_ptr<Builder> builder)
+	bool buildEngine() override
 	{
-		if (builder->buildPart1() && builder->buildPart2()) 
-			return builder->getProduct();
-			
-		return shared_ptr<Product>();
+		if (!part)
+			++part;
+
+		if (part != 1) return false;
+		
+		cout << "Building part 1: Engine for Sedan;" << endl;
+		return true;
+	}
+	
+	bool buildChassis() override
+	{
+		if (part == 1)
+			++part;
+
+		if (part != 2) return false;
+
+		cout << "Building part 2: Chassis for Sedan;" << endl;
+	}
+
+protected:
+	shared_ptr<Product> createCar() override;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="CarFactory" %}
+{% code fullWidth="true" %}
+```cpp
+class CarFactory
+{
+public:
+	virtual ~CarFactory() = default;
+	virtual shared_ptr<Car> create() = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="CarDirector" %}
+{% code fullWidth="true" %}
+```cpp
+class CarDirector : public CarFactory
+{
+public:
+	CarDirector(shared_ptr<CarBuilder> builder) : br(builder) {}
+
+	shared_ptr<Car> create() override
+	{
+		if (br->buildEngine() && br->buildChassis()) return br->getCar();
+
+		return nullptr;
+	}
+
+private:
+	shared_ptr<CarBuilder> br;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Methods" %}
+{% code fullWidth="true" %}
+```cpp
+# pragma region Methods
+shared_ptr<Car> CarBuilder::getCar()
+{
+	if (!car) { car = createCar(); }
+
+	return car;
+}
+
+shared_ptr<Car> SedanBuilder::createCar()
+{
+	if (part == 2) { car = make_shared<Sedan>(); }
+
+	return car;
+}
+
+# pragma endregion
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+class User
+{
+public:
+	void use(shared_ptr<CarFactory>& factory)
+	{
+		shared_ptr<Car> car = factory->create();
+
+		if (car)
+			car->drive();
 	}
 };
 ```
@@ -126,11 +188,10 @@ using namespace std;
 
 int main()
 {
-	shared_ptr<Builder> builder = make_shared<ConBuilder>();
-	shared_ptr<Director> director = make_shared<Director>();
-	shared_ptr<Product> prod = director->create(builder);
-	if (prod)
-		prod->run();
+	shared_ptr<CarBuilder> builder = make_shared<SedanBuilder>();
+	shared_ptr<CarFactory> factory = make_shared<CarDirector>(builder);
+
+	User{}.use(factory);
 }
 ```
 {% endcode %}
