@@ -23,6 +23,7 @@
   * [Одиночка](patterns/creationals-patterns/singleton/README.md)
     * [Реализации на C++](patterns/creationals-patterns/singleton/realizacii-na-c++.md)
     * [Реализации на Kotlin](patterns/creationals-patterns/singleton/realizacii-na-kotlin.md)
+    * [Возможные реализации для решения конкретных задач на С++](patterns/creationals-patterns/singleton/vozmozhnye-realizacii-dlya-resheniya-konkretnykh-zadach-na-s++.md)
   * [Пулл объектов](patterns/creationals-patterns/object-pull/README.md)
     * [Реализации на С++](patterns/creationals-patterns/object-pull/realizacii-na-s++.md)
 * [Структурные паттерны](patterns/structural-patterns/README.md)

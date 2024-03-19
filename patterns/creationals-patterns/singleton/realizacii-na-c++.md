@@ -7,40 +7,43 @@ description: Singleton
 ## Общая реализация на языке С++
 
 {% tabs %}
-{% tab title="Product" %}
+{% tab title="Sun" %}
 {% hint style="info" %}
 Конструктор помечается модификатором private, чтобы объект класса нельзя было создать извне
 {% endhint %}
 
 {% code fullWidth="true" %}
 ```cpp
-class Product
+class Sun
 {
 public:
-   static shared_ptr<Product> instance()
-   {
-       static shared_ptr<Product> myInstance(new Product());
-       return myInstance;
-   }
-   
-   ~Product() 
-   {
-        cout << "Destructor;" << endl; 
-   }
+	static shared_ptr<Sun> instance()
+	{
+		class SunProxy : public Sun {};
 
-   void f() 
-   {
-        cout << "Method f;" << endl; 
-   }
+		static shared_ptr<Sun> myInstance = make_shared<SunProxy>();
 
-   Product(const Product&) = delete; 
-   Product& operator=(const Product&) = delete; 
+		return myInstance;
+	}
+	
+	~Sun() 
+	{ 
+		cout << "Calling the destructor;" << endl; 
+	}
+
+	void shine() 
+	{ 
+		cout << "The sun is shining;" << endl; 
+	}
+
+	Sun(const Sun&) = delete;
+	Sun& operator =(const Sun&) = delete;
 
 private:
-   Product() 
-   { 
-        cout << "Default constructor;" << endl; 
-   }
+	Sun() 
+	{ 
+		cout << "Calling the default constructor;" << endl; 
+	}
 };
 ```
 {% endcode %}
@@ -56,9 +59,9 @@ using namespace std;
 
 int main()
 {
-   shared_ptr<Product> ptr(Product::instance());
+	shared_ptr<Sun> sun(Sun::instance());
 
-   ptr->f();
+	sun->shine();
 }
 ```
 {% endcode %}
