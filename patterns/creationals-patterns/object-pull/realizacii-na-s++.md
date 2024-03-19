@@ -7,135 +7,160 @@ description: Object pool
 ## Общая реализация на языке С++
 
 {% tabs %}
-{% tab title="Product" %}
+{% tab title="EmployeePoolObject" %}
 {% code fullWidth="true" %}
 ```cpp
-class Product
+template <typename T>
+concept EmployeePoolObject = requires(T t)
 {
-private:
-    static size_t count;
-    
-public:
-    Product() 
-    { 
-        cout << "Constructor(" << ++count << ");" << endl; 
-    }
-    ~Product() 
-    { 
-        cout << "Destructor(" << count-- << ");" << endl; 
-    }
-
-    void clear() 
-    { 
-        cout << "Method clear: 0x" << this << endl; 
-    }
+	t.clockIn();
 };
-
-size_t Product::count = 0;
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="ObjectPool" %}
+{% tab title="Employee" %}
 {% code fullWidth="true" %}
 ```cpp
-template <typename Type>
-class ObjectPool
+class Employee
 {
-public:
-    static shared_ptr<ObjectPool<Type>> instance();
-    
-    shared_ptr<Type> getObject(); 
-    
-    bool releaseObject(shared_ptr<Type>& obj);
-    
-    size_t count() const 
-    { 
-        return pool.size(); 
-    }
-
-    iterator<output_iterator_tag, const pair<bool, shared_ptr<Type>>> begin() const;
-    iterator<output_iterator_tag, const pair<bool, shared_ptr<Type>>> end() const;
-
-    ObjectPool(const ObjectPool<Type>&) = delete;    
-    ObjectPool<Type>& operator=(const ObjectPool<Type>&) = delete;
-
 private:
-    vector<pair<bool, shared_ptr<Type>>> pool;
+	static size_t count;
 
-    ObjectPool() {}
+public:
+	Employee() 
+	{ 
+		cout << "Constructor(" << ++count << ");" << endl; 
+	}
+	
+	~Employee() 
+	{ 
+		cout << "Destructor(" << count-- << ");" << endl; 
+	}
 
-    pair<bool, shared_ptr<Type>> create();
-
-    template <typename Type>
-    friend ostream& operator << (ostream& os, const ObjectPool<Type>& pl);
+	void clockIn() 
+	{ 
+		cout << "Employee clocked in: 0x" << this << endl; 
+	}
 };
 
-template <typename Type>
-ostream& operator << (ostream& os, const ObjectPool<Type>& pl)
+size_t Employee::count = 0;
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="EmployeePool" %}
+{% code fullWidth="true" %}
+```cpp
+template <EmployeePoolObject Type>
+class EmployeePool
 {
-    for (auto elem : pl.pool)
-        os << "{" << elem.first << ", 0x" << elem.second << "} ";
-        
-    return os;
+public:
+	static shared_ptr<EmployeePool<Type>> instance();
+
+	shared_ptr<Type> hireEmployee();
+	bool fireEmployee(shared_ptr<Type>& employee);
+	size_t count() const { return pool.size(); }
+
+	EmployeePool(const EmployeePool&) = delete;
+	EmployeePool& operator =(const EmployeePool&) = delete;
+
+private:
+	vector<pair<bool, shared_ptr<Type>>> pool;
+
+	EmployeePool() {}
+
+	pair<bool, shared_ptr<Type>> createEmployee();
+
+	template <typename Type>
+	friend ostream& operator << (ostream& os, const EmployeePool<Type>& pl);
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="instance()" %}
+{% code fullWidth="true" %}
+```cpp
+template <EmployeePoolObject Type>
+shared_ptr<EmployeePool<Type>> EmployeePool<Type>::instance()
+{
+	static shared_ptr<EmployeePool<Type>> myInstance(new EmployeePool<Type>());
+
+	return myInstance;
 }
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="Methods" %}
+{% tab title="hireEmployee()" %}
 {% code fullWidth="true" %}
 ```cpp
-#pragma region Methods  
-
-template <typename Type>
-shared_ptr<ObjectPool<Type>> ObjectPool<Type>::instance()
+template <EmployeePoolObject Type>
+shared_ptr<Type> EmployeePool<Type>::hireEmployee()
 {
-    static shared_ptr<ObjectPool<Type>> myInstance(new ObjectPool<Type>());
+	size_t i;
+	for (i = 0; i < pool.size() && pool[i].first; ++i);
 
-    return myInstance;
+	if (i < pool.size())
+	{
+		pool[i].first = true;
+	}
+	else
+	{
+		pool.push_back(createEmployee());
+	}
+
+	return pool[i].second;
 }
+```
+{% endcode %}
+{% endtab %}
 
-template <typename Type>
-shared_ptr<Type> ObjectPool<Type>::getObject()
+{% tab title="fireEmployee()" %}
+{% code fullWidth="true" %}
+```cpp
+template <EmployeePoolObject Type>
+bool EmployeePool<Type>::fireEmployee(shared_ptr<Type>& employee)
 {
-    size_t i;
-    for (i = 0; i < pool.size() && pool[i].first; ++i);
+	size_t i;
+	for (i = 0; pool[i].second != employee && i < pool.size(); ++i);
 
-    if (i < pool.size())
-    {
-        pool[i].first = true;
-    }
-    else
-    {
-        pool.push_back(create());
-    }
+	if (i == pool.size()) return false;
 
-    return pool[i].second;
+	employee.reset();
+	pool[i].first = false;
+	pool[i].second->clockIn();
+
+	return true;
 }
+```
+{% endcode %}
+{% endtab %}
 
-template <typename Type>
-bool ObjectPool<Type>::releaseObject(shared_ptr<Type>& obj)
+{% tab title="createEmployee()" %}
+{% code fullWidth="true" %}
+```cpp
+template <EmployeePoolObject Type>
+pair<bool, shared_ptr<Type>> EmployeePool<Type>::createEmployee()
 {
-    size_t i;
-    for (i = 0; i < pool.size() && pool[i].second != obj; ++i);
-
-    if (i == pool.size()) return false;
-
-    obj.reset();
-    pool[i].first = false;
-    pool[i].second->clear();
-
-    return true;
+	return { true, make_shared<Type>() };
 }
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="operator <<" %}
+{% code fullWidth="true" %}
+```cpp
 template <typename Type>
-pair<bool, shared_ptr<Type>> ObjectPool<Type>::create()
+ostream& operator << (ostream& os, const EmployeePool<Type>& pl)
 {
-    return pair<bool, shared_ptr<Type>>(true, shared_ptr<Type>(new Type()));
-}
+	for (auto elem : pl.pool)
+		os << "{" << elem.first << ", 0x" << elem.second << "} ";
 
-#pragma endregion
+	return os;
+}
 ```
 {% endcode %}
 {% endtab %}
@@ -143,6 +168,8 @@ pair<bool, shared_ptr<Type>> ObjectPool<Type>::create()
 
 {% code lineNumbers="true" fullWidth="true" %}
 ```cpp
+# include <iostream>
+# include <memory>
 # include <iterator>
 # include <vector>
 
@@ -150,21 +177,21 @@ using namespace std;
 
 int main()
 {
-    shared_ptr<ObjectPool<Product>> pool = ObjectPool<Product>::instance();
+	shared_ptr<EmployeePool<Employee>> pool = EmployeePool<Employee>::instance();
 
-    vector<shared_ptr<Product>> vec(4);
+	vector<shared_ptr<Employee>> vec(4);
 
-    for (auto& elem : vec)
-        elem = pool->getObject();
+	for (auto& elem : vec)
+		elem = pool->hireEmployee();
 
-    pool->releaseObject(vec[1]);
+	pool->fireEmployee(vec[1]);
 
-    cout << *pool << endl;
+	cout << *pool << endl;
 
-    shared_ptr<Product> ptr = pool->getObject();
-    vec[1] = pool->getObject();
+	shared_ptr<Employee> ptr = pool->hireEmployee();
+	vec[1] = pool->hireEmployee();
 
-    cout << *pool << endl;
+	cout << *pool << endl;
 }
 ```
 {% endcode %}
