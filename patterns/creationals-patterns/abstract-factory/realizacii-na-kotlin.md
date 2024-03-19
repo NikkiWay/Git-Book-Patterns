@@ -1,5 +1,5 @@
 ---
-description: Abstarct factory
+description: Abstract factory
 ---
 
 # Реализации на Kotlin

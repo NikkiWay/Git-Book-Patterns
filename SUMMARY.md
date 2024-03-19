@@ -13,6 +13,7 @@
   * [Абстрактная фабрика](patterns/creationals-patterns/abstract-factory/README.md)
     * [Реализации на С++](patterns/creationals-patterns/abstract-factory/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/creationals-patterns/abstract-factory/realizacii-na-kotlin.md)
+    * [Возможные реализации для решения конкретных задач на С++](patterns/creationals-patterns/abstract-factory/vozmozhnye-realizacii-dlya-resheniya-konkretnykh-zadach-na-s++.md)
   * [Прототип](patterns/creationals-patterns/prototype/README.md)
     * [Реализации на С++](patterns/creationals-patterns/prototype/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/creationals-patterns/prototype/realizacii-na-kotlin.md)
