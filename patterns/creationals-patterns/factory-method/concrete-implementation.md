@@ -19,6 +19,8 @@ layout:
 
 В рамках данной реализации появляется возможность избавиться от необходимости создания конкретного объекта в коде.
 
+Идея заключается в создании иерархии классов, объекты которых будут отвечать за создание наших объектов, то есть базовый класс будет иметь метод create виртуальный, а последующие создатели будут реализовывать этот метод.
+
 {% tabs %}
 {% tab title="Car" %}
 {% code fullWidth="true" %}
@@ -131,123 +133,15 @@ int main()
 ```
 {% endcode %}
 
-## Фабричный метод с шаблонным CarFactory
-
-{% tabs %}
-{% tab title="Car" %}
-{% code fullWidth="true" %}
-```cpp
-class Car
-{
-public:
-    virtual ~Car() = default;
-    virtual void drive() = 0;
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Sedan" %}
-{% code fullWidth="true" %}
-```cpp
-class Sedan : public Car
-{
-public:
-    Sedan() 
-    { 
-        cout << "Sedan constructor called" << endl; 
-    }
-    
-    ~Sedan() override 
-    { 
-        cout << "Sedan destructor called" << endl; 
-    }
-
-    void drive() override 
-    { 
-        cout << "Driving sedan" << endl; 
-    }
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Concepts" %}
-```cpp
-template <typename Derived, typename Base>
-concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
-
-template <typename Type>
-concept NotAbstract = !is_abstract_v<Type>;
-```
-{% endtab %}
-
-{% tab title="CarFactory" %}
-{% code fullWidth="true" %}
-```cpp
-template <Derivative<Car> TCar>
-requires NotAbstract<TCar>
-class CarFactory
-{
-public:
-    unique_ptr<Car> create()
-    {
-        return make_unique<TCar>();
-    }
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="User" %}
-{% code fullWidth="true" %}
-```cpp
-class User
-{
-public:
-    template<NotAbstract TCar>
-    requires Derivative<TCar, Car>
-    void use(shared_ptr<CarFactory<TCar>> factory);
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Method User" %}
-{% code fullWidth="true" %}
-```cpp
-template<NotAbstract TCar>
-requires Derivative<TCar, Car>
-void User::use(shared_ptr<CarFactory<TCar>> factory)
-{
-    shared_ptr<Car> car = factory->create();
-    car->drive();
-}
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
-
-{% code fullWidth="true" %}
-```cpp
-# include <iostream>
-# include <memory>
-
-using namespace std;
-
-int main()
-{
-	using SedanFactory_t = CarFactory<Sedan>;
-  	shared_ptr<SedanFactory_t> sedanFactory = make_shared<SedanFactory_t>();
-
-	unique_ptr<User> user = make_unique<User>();
-	
-	user->use(sedanFactory);
-}
-```
-{% endcode %}
-
 ## Фабричный метод без повторного создания объектов. Идиома NVI (Non-Virtual Interface).
+
+Задан базовый абстрактный класс CarFactory с public методом getCar(), protected виртуальным методом createCar() и приватным полем car.&#x20;
+
+Метод getCar() создает Car, если он уже не создан и возвращает поле car.&#x20;
+
+Неабстрактный класс ConcreteCarFactory наследуется от CarFactory и определяет метод createCar(), для создания конкретного объекта.
+
+Фабричный метод с использованием идиомы NVI применяется в случаях множественного использования тяжелого (тяжело создаваемого) объекта, при отсутствии необходимости в нескольких объектов данного типа.
 
 {% tabs %}
 {% tab title="Car" %}
@@ -396,7 +290,131 @@ int main()
 ```
 {% endcode %}
 
+## Фабричный метод с шаблонным CarFactory
+
+В данном случае задан один единственный CarFactory, он является шаблонным, что позволяет избавиться от необходимости создания конкретных креаторов ([Creator](./#uml-diagramma)) для каждого типа объекта.&#x20;
+
+При данном подходе решение о создании объекта переносится на стадию компиляции и от этого выполнение происходит быстрее, но при добавлении новых типов объектов придется перекомпилировать всю кодовую базу, содержащую данный креатор.
+
+{% tabs %}
+{% tab title="Car" %}
+{% code fullWidth="true" %}
+```cpp
+class Car
+{
+public:
+    virtual ~Car() = default;
+    virtual void drive() = 0;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Sedan" %}
+{% code fullWidth="true" %}
+```cpp
+class Sedan : public Car
+{
+public:
+    Sedan() 
+    { 
+        cout << "Sedan constructor called" << endl; 
+    }
+    
+    ~Sedan() override 
+    { 
+        cout << "Sedan destructor called" << endl; 
+    }
+
+    void drive() override 
+    { 
+        cout << "Driving sedan" << endl; 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Concepts" %}
+```cpp
+template <typename Derived, typename Base>
+concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
+
+template <typename Type>
+concept NotAbstract = !is_abstract_v<Type>;
+```
+{% endtab %}
+
+{% tab title="CarFactory" %}
+{% code fullWidth="true" %}
+```cpp
+template <Derivative<Car> TCar>
+requires NotAbstract<TCar>
+class CarFactory
+{
+public:
+    unique_ptr<Car> create()
+    {
+        return make_unique<TCar>();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+class User
+{
+public:
+    template<NotAbstract TCar>
+    requires Derivative<TCar, Car>
+    void use(shared_ptr<CarFactory<TCar>> factory);
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Method User" %}
+{% code fullWidth="true" %}
+```cpp
+template<NotAbstract TCar>
+requires Derivative<TCar, Car>
+void User::use(shared_ptr<CarFactory<TCar>> factory)
+{
+    shared_ptr<Car> car = factory->create();
+    car->drive();
+}
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+{% code fullWidth="true" %}
+```cpp
+# include <iostream>
+# include <memory>
+
+using namespace std;
+
+int main()
+{
+	using SedanFactory_t = CarFactory<Sedan>;
+  	shared_ptr<SedanFactory_t> sedanFactory = make_shared<SedanFactory_t>();
+
+	unique_ptr<User> user = make_unique<User>();
+	
+	user->use(sedanFactory);
+}
+```
+{% endcode %}
+
 ## Фабричный метод с шаблонным базовым классом Factory
+
+BaseFactory - абстрактный базовый класс создаваемых объектов продуктов (в нашем случае Car), от которого наследуется конкретный шаблонный Factory. Параметр шаблона Tbase - это абстрактный базовый класс иерархии классов продуктов.
+
+Идея в создании базового абстрактного шаблонного класса BaseFactory, принимающего абстрактный класс, заключается в возможности не создавать для каждой иерархии продуктов свой базовый класс Factory.
 
 {% tabs %}
 {% tab title="Car" %}
@@ -581,6 +599,10 @@ int main()
 {% hint style="info" %}
 Статический полиморфизм (compile-time polymorphism) - это механизм, который позволяет вызывать различные функции или методы с одним и тем же именем, но с разными параметрами или типами данных. Это достигается с помощью перегрузки функций или методов. Компилятор статически выбирает соответствующую функцию или метод на основе типов параметров, указанных при вызове.
 {% endhint %}
+
+Задан базовый шаблонный класс Factory (он же [Creator](./#uml-diagramma)), который имеет метод create(). В методе происходит приведение объекта класса к типу, задаваемым параметром шаблона Tcrt, и вызывается метод по созданию объекта (create\_impl). Любой креатор, который будет использован для создания базового Factory должен иметь данную функцию по созданию конкретного объекта.&#x20;
+
+Подход дает большую гибкость для расширения типов креаторов, не меняя написанного кода. Также содержит все плюсы и минусы шаблонных классов.
 
 {% tabs %}
 {% tab title="Car" %}
