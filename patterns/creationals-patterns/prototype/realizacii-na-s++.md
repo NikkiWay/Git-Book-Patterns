@@ -7,45 +7,59 @@ description: Prototype
 ## Общая реализация на языке С++
 
 {% tabs %}
-{% tab title="BaseObject" %}
+{% tab title="Car" %}
 {% code fullWidth="true" %}
 ```cpp
-class BaseObject
+class Car
 {
 public:
-    virtual ~BaseObject() = default;
-
-    virtual unique_ptr<BaseObject> clone() = 0;
+	virtual ~Car() = default;
+	virtual unique_ptr<Car> clone() = 0;
 };
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="ConcreteObject" %}
+{% tab title="Sedan" %}
 {% code fullWidth="true" %}
 ```cpp
-class ConcreteObject : public BaseObject
+class Sedan : public Car
 {
 public:
-    ConcreteObject() 
-    {
-        cout << "Default constructor;" << endl; 
-    }
-    
-    ConcreteObject(const Object1& obj) 
-    { 
-        cout << "Copy constructor;" << endl; 
-    }
-    
-    ~ConcreteObject() 
-    { 
-        cout << "Destructor;" << endl; 
-    }
+	Sedan() 
+	{ 
+		cout << "Calling the default constructor;" << endl; 
+	}
+	
+	Sedan(const Sedan& car) 
+	{ 
+		cout << "Calling the Copy constructor;" << endl; 
+	}
+	
+	~Sedan() override 
+	{ 
+		cout << "Calling the destructor;" << endl; 
+	}
 
-    virtual unique_ptr<BaseObject> clone() override
-    {
-        return make_unique<ConcreteObject>(*this)
-    }
+	unique_ptr<Car> clone() override
+	{
+		return make_unique<Sedan>(*this);
+	}
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+class User
+{
+public:
+	void use(shared_ptr<Car>&car)
+	{
+		auto newCar = car->clone();
+	}
 };
 ```
 {% endcode %}
@@ -61,8 +75,8 @@ using namespace std;
 
 int main()
 {
-    shared_ptr<BaseObject> ptr1 = make_shared<ConcreteObject>();    
-    auto ptr2 = ptr1->clone();
+	shared_ptr<Car> sedan = make_shared<Sedan>();
+	User{}.use(sedan);
 }
 ```
 {% endcode %}

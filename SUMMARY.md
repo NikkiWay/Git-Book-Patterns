@@ -18,6 +18,7 @@
     * [Реализации на С++](patterns/creationals-patterns/prototype/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/creationals-patterns/prototype/realizacii-na-kotlin.md)
     * [Реализации на Java](patterns/creationals-patterns/prototype/realizacii-na-java.md)
+    * [Возможные реализации для решения конкретных задач на С++](patterns/creationals-patterns/prototype/vozmozhnye-realizacii-dlya-resheniya-konkretnykh-zadach-na-s++.md)
   * [Строитель](patterns/creationals-patterns/builder/README.md)
     * [Реализации на С++](patterns/creationals-patterns/builder/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/creationals-patterns/builder/realizacii-na-kotlin.md)
