@@ -1,5 +1,5 @@
 ---
-description: Abstarct factory
+description: Abstract factory
 ---
 
 # Реализации на С++
@@ -21,17 +21,37 @@ BaseGraphics::~BaseGraphics() {}
 {% endcode %}
 {% endtab %}
 
+{% tab title="QtGraphics" %}
+{% code fullWidth="true" %}
+```cpp
+class QtGraphics : public BaseGraphics
+{
+public:
+	QtGraphics(shared_ptr<Image> im) 
+	{
+		cout << "Calling the QtGraphics constructor;" << endl; 
+	}
+	
+	~QtGraphics() override 
+	{ 
+		cout << "Calling the QtGraphics destructor;" << endl; 
+	}
+};
+```
+{% endcode %}
+{% endtab %}
+
 {% tab title="AbstractGraphFactory" %}
 {% code fullWidth="true" %}
 ```cpp
 class AbstractGraphFactory
 {
 public:
-    virtual unique_ptr<BaseGraphics> createGraphics(shared_ptr<Image> im) = 0;
-    
-    virtual unique_ptr<BasePen> createPen(shared_ptr<Color> cl) = 0;
-    
-    virtual unique_ptr<BaseBrush> createBrush(shared_ptr<Color> cl) = 0;
+	virtual ~AbstractGraphFactory() = default;
+
+	virtual unique_ptr<BaseGraphics> createGraphics(shared_ptr<Image> im) = 0;
+	virtual unique_ptr<BasePen> createPen(shared_ptr<Color> cl) = 0;
+	virtual unique_ptr<BaseBrush> createBrush(shared_ptr<Color> cl) = 0;
 };
 ```
 {% endcode %}
@@ -42,21 +62,37 @@ public:
 ```cpp
 class QtGraphFactory : public AbstractGraphFactory
 {
-    virtual unique_ptr<BaseGraphics> createGraphics(shared_ptr<Image> im)
-    { 
-        return make_unique<QtGraphics>(im); 
-    }
+public:
+	unique_ptr<BaseGraphics> createGraphics(shared_ptr<Image> im) override
+	{
+		return make_unique<QtGraphics>(im);
+	}
 
-    virtual unique_ptr<BasePen> createPen(shared_ptr<Color> cl)
-    { 
-        return make_unique<QtPen>(); 
-    }
+	unique_ptr<BasePen> createPen(shared_ptr<Color> cl) override
+	{
+		return make_unique<QtPen>();
+	}
 
-    virtual unique_ptr<BaseBrush> createBrush(shared_ptr<Color> cl)
-    { 
-         
-        return make_unique<QtBrush>();
-    }
+	unique_ptr<BaseBrush> createBrush(shared_ptr<Color> cl) override
+	{
+		return make_unique<QtBrush>();
+	}
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+class User
+{
+public:
+	void use(shared_ptr<AbstractGraphFactory>& cr)
+	{
+		shared_ptr<Image> image = make_shared<Image>();
+		auto graphics = cr->createGraphics(image);
+	}
 };
 ```
 {% endcode %}
@@ -108,10 +144,11 @@ using namespace std;
 
 int main()
 {
-    shared_ptr<AbstractGraphFactory> graphfactory = make_shared<QtGraphFactory>();
-    shared_ptr<Image> image = make_shared<Image>();
-    shared_ptr<BaseGraphics> graphics1 = grfactory->createGraphics(image);
-    shared_ptr<BaseGraphics> graphics2 = grfactory->createGraphics(image);
+	shared_ptr<AbstractGraphFactory> grfactory = make_shared<QtGraphFactory>();
+
+	unique_ptr<User> us = make_unique<User>();
+
+	us->use(grfactory);
 }
 ```
 {% endcode %}
