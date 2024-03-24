@@ -9,7 +9,7 @@
   * [Фабричный метод](patterns/creationals-patterns/factory-method/README.md)
     * [Реализации на С++](patterns/creationals-patterns/factory-method/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/creationals-patterns/factory-method/realizacii-na-kotlin.md)
-    * [Возможные реализации для решения конкретных задач](patterns/creationals-patterns/factory-method/concrete-implementation.md)
+    * [Возможные реализации для решения конкретных задач на С++](patterns/creationals-patterns/factory-method/concrete-implementation.md)
   * [Абстрактная фабрика](patterns/creationals-patterns/abstract-factory/README.md)
     * [Реализации на С++](patterns/creationals-patterns/abstract-factory/realizacii-na-s++.md)
     * [Реализации на Kotlin](patterns/creationals-patterns/abstract-factory/realizacii-na-kotlin.md)
