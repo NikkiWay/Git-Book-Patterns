@@ -228,7 +228,7 @@ int main()
     try
     {
         shared_ptr<VehicleSolution> solution
-        CarFactoryMaker::createCarFactory<Sedan>} });
+        = make_solution({ {1, CarFactoryMaker::createCarFactory<Sedan>} });
 
         if (!solution->registration(2, CarFactoryMaker::createCarFactory<SUV>))
         {
