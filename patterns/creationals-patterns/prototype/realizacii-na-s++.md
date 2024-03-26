@@ -16,13 +16,8 @@ public:
 	virtual ~Car() = default;
 	virtual unique_ptr<Car> clone() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Sedan" %}
-{% code fullWidth="true" %}
-```cpp
+
 class Sedan : public Car
 {
 public:

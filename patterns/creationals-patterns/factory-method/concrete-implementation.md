@@ -31,13 +31,7 @@ public:
     virtual ~Car() = default;  
     virtual void drive() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Sedan" %}
-{% code fullWidth="true" %}
-```cpp
 class Sedan : public Car
 {
 public:
@@ -79,13 +73,7 @@ public:
     virtual ~CarFactory() = default;
     virtual unique_ptr<Car> create() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="ConcreteCarFactory" %}
-{% code fullWidth="true" %}
-```cpp
 template <Derivative<Car> TCar>
 requires NotAbstract<TCar>
 class ConcreteCarFactory : public CarFactory
@@ -135,9 +123,9 @@ int main()
 
 ## Фабричный метод без повторного создания объектов. Идиома NVI (Non-Virtual Interface).
 
-Задан базовый абстрактный класс CarFactory с public методом getCar(), protected виртуальным методом createCar() и приватным полем car.&#x20;
+Задан базовый абстрактный класс CarFactory с public методом getCar(), protected виртуальным методом createCar() и приватным полем car.
 
-Метод getCar() создает Car, если он уже не создан и возвращает поле car.&#x20;
+Метод getCar() создает Car, если он уже не создан и возвращает поле car.
 
 Неабстрактный класс ConcreteCarFactory наследуется от CarFactory и определяет метод createCar(), для создания конкретного объекта.
 
@@ -153,13 +141,8 @@ public:
     virtual ~Car() = default;
     virtual void drive() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Sedan" %}
-{% code fullWidth="true" %}
-```cpp
+
 class Sedan : public Car
 {
 public:
@@ -210,13 +193,8 @@ protected:
 private:
     shared_ptr<Car> car{ nullptr };
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="ConcreteCarFactory" %}
-{% code fullWidth="true" %}
-```cpp
+
 template <Derivative<Car> TCar>
 requires NotAbstract<TCar>
 class ConcreteCarFactory : public CarFactory
@@ -292,7 +270,7 @@ int main()
 
 ## Фабричный метод с шаблонным CarFactory
 
-В данном случае задан один единственный CarFactory, он является шаблонным, что позволяет избавиться от необходимости создания конкретных креаторов ([Creator](./#uml-diagramma)) для каждого типа объекта.&#x20;
+В данном случае задан один единственный CarFactory, он является шаблонным, что позволяет избавиться от необходимости создания конкретных креаторов ([Creator](./#uml-diagramma)) для каждого типа объекта.
 
 При данном подходе решение о создании объекта переносится на стадию компиляции и от этого выполнение происходит быстрее, но при добавлении новых типов объектов придется перекомпилировать всю кодовую базу, содержащую данный креатор.
 
@@ -306,13 +284,8 @@ public:
     virtual ~Car() = default;
     virtual void drive() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Sedan" %}
-{% code fullWidth="true" %}
-```cpp
+
 class Sedan : public Car
 {
 public:
@@ -372,13 +345,8 @@ public:
     requires Derivative<TCar, Car>
     void use(shared_ptr<CarFactory<TCar>> factory);
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Method User" %}
-{% code fullWidth="true" %}
-```cpp
+
 template<NotAbstract TCar>
 requires Derivative<TCar, Car>
 void User::use(shared_ptr<CarFactory<TCar>> factory)
@@ -426,13 +394,8 @@ public:
     virtual ~Car() = default;
     virtual void drive() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Sedan" %}
-{% code fullWidth="true" %}
-```cpp
+
 class Sedan : public Car
 {
 private:
@@ -455,13 +418,8 @@ public:
         cout << "Driving sedan" << endl; 
     }
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="SUV" %}
-{% code fullWidth="true" %}
-```cpp
+
 class SUV : public Car 
 {
 public:
@@ -538,14 +496,9 @@ public:
     virtual ~BaseFactory() = default;
     virtual unique_ptr<Tbase> create(Args&& ...args) = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Factory" %}
-{% code fullWidth="true" %}
-```cpp
-template <typename Tbase, typename TCar, typename... Args>
+
+template <typename Tbase, typename Tprod, typename... Args>
 requires NotAbstract<Tprod>&& Derivative<Tprod, Tbase>&& Constructible<Tprod, Args...>
 class Factory : public BaseFactory<Tbase, Args...>
 {
@@ -600,7 +553,7 @@ int main()
 Статический полиморфизм (compile-time polymorphism) - это механизм, который позволяет вызывать различные функции или методы с одним и тем же именем, но с разными параметрами или типами данных. Это достигается с помощью перегрузки функций или методов. Компилятор статически выбирает соответствующую функцию или метод на основе типов параметров, указанных при вызове.
 {% endhint %}
 
-Задан базовый шаблонный класс Factory (он же [Creator](./#uml-diagramma)), который имеет метод create(). В методе происходит приведение объекта класса к типу, задаваемым параметром шаблона Tcrt, и вызывается метод по созданию объекта (create\_impl). Любой креатор, который будет использован для создания базового Factory должен иметь данную функцию по созданию конкретного объекта.&#x20;
+Задан базовый шаблонный класс Factory (он же [Creator](./#uml-diagramma)), который имеет метод create(). В методе происходит приведение объекта класса к типу, задаваемым параметром шаблона Tcrt, и вызывается метод по созданию объекта (create\_impl). Любой креатор, который будет использован для создания базового Factory должен иметь данную функцию по созданию конкретного объекта.
 
 Подход дает большую гибкость для расширения типов креаторов, не меняя написанного кода. Также содержит все плюсы и минусы шаблонных классов.
 
@@ -614,13 +567,8 @@ public:
     virtual ~Car() = default;
     virtual void drive() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Sedan" %}
-{% code fullWidth="true" %}
-```cpp
+
 class Sedan : public Car
 {
 public:
@@ -665,13 +613,8 @@ public:
         return static_cast<const Tcrt*>(this)->create_impl();
     }
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="CarFactory" %}
-{% code fullWidth="true" %}
-```cpp
+
 template <Derivative<Car> TCar>
 requires NotAbstract<TCar>
 class CarFactory : public Factory<CarFactory<TCar>>
@@ -713,7 +656,7 @@ using namespace std;
 
 int main()
 {
-    factory<CarFactory<Sedan>> factory;
+    Factory<CarFactory<Sedan>> factory;
     User{}.use(factory);
 }
 ```
@@ -732,22 +675,12 @@ public:
 
     virtual shared_ptr<Command> create_command() const = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Concept" %}
-{% code fullWidth="true" %}
-```cpp
+
 template <typename Tder, typename Tbase = Command>
 concept Derived = is_base_of_v<Tbase, Tder>;
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="CommandCreator" %}
-{% code fullWidth="true" %}
-```cpp
+
 template <Derived<Command> Type>
 class CommandCreator : public BaseCommandCreator
 {
@@ -803,13 +736,8 @@ public:
     virtual ~Command() = default;
     virtual void execute() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="SimpleCommand" %}
-{% code fullWidth="true" %}
-```cpp
+
 template <typename Reseiver>
 requires is_class_v<Reseiver> && MFP::is_member_function_pointer_v<void (Reseiver::*)()>
 class SimpleCommand : public Command

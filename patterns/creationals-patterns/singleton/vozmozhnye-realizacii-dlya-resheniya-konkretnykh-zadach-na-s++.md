@@ -7,42 +7,27 @@ description: Singleton
 ## Шаблон одиночка (Singleton)
 
 {% tabs %}
-{% tab title="NotAbstractClass" %}
+{% tab title="Concepts" %}
 {% code fullWidth="true" %}
 ```cpp
 template <typename T>
 concept NotAbstractClass = is_class_v<T> && !is_abstract_v<T>;
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="CopyConstructible" %}
-{% code fullWidth="true" %}
-```cpp
+
 template <typename T>
 concept CopyConstructible = requires(T t)
 {
 	T(t);
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Assignable" %}
-{% code fullWidth="true" %}
-```cpp
+
 template <typename T>
 concept Assignable = requires(T t1, T t2)
 {
 	t1 = t2;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="OnlyObject" %}
-{% code fullWidth="true" %}
-```cpp
+
 template <typename T>
 concept OnlyObject = NotAbstractClass<T> && !CopyConstructible<T> && !Assignable<T>;
 ```
