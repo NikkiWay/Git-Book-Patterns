@@ -17,13 +17,8 @@ public:
 };
 
 BaseGraphics::~BaseGraphics() {}
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="QtGraphics" %}
-{% code fullWidth="true" %}
-```cpp
+
 class QtGraphics : public BaseGraphics
 {
 public:
@@ -53,13 +48,8 @@ public:
 	virtual unique_ptr<BasePen> createPen(shared_ptr<Color> cl) = 0;
 	virtual unique_ptr<BaseBrush> createBrush(shared_ptr<Color> cl) = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="QtGraphFactory" %}
-{% code fullWidth="true" %}
-```cpp
+
 class QtGraphFactory : public AbstractGraphFactory
 {
 public:

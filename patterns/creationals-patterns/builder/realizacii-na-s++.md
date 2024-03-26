@@ -16,13 +16,8 @@ public:
 	virtual ~Car() = default;
 	virtual void drive() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Sedan" %}
-{% code fullWidth="true" %}
-```cpp
+
 class Sedan : public Car
 {
 public:
@@ -64,13 +59,8 @@ protected:
 	shared_ptr<Car> car{ nullptr };
 	size_t part{ 0 };
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="SedanBuilder" %}
-{% code fullWidth="true" %}
-```cpp
+
 class SedanBuilder : public CarBuilder
 {
 public:
@@ -102,41 +92,6 @@ protected:
 {% endcode %}
 {% endtab %}
 
-{% tab title="CarFactory" %}
-{% code fullWidth="true" %}
-```cpp
-class CarFactory
-{
-public:
-	virtual ~CarFactory() = default;
-	virtual shared_ptr<Car> create() = 0;
-};
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="CarDirector" %}
-{% code fullWidth="true" %}
-```cpp
-class CarDirector : public CarFactory
-{
-public:
-	CarDirector(shared_ptr<CarBuilder> builder) : br(builder) {}
-
-	shared_ptr<Car> create() override
-	{
-		if (br->buildEngine() && br->buildChassis()) return br->getCar();
-
-		return nullptr;
-	}
-
-private:
-	shared_ptr<CarBuilder> br;
-};
-```
-{% endcode %}
-{% endtab %}
-
 {% tab title="Methods" %}
 {% code fullWidth="true" %}
 ```cpp
@@ -156,6 +111,36 @@ shared_ptr<Car> SedanBuilder::createCar()
 }
 
 # pragma endregion
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="CarFactory" %}
+{% code fullWidth="true" %}
+```cpp
+class CarFactory
+{
+public:
+	virtual ~CarFactory() = default;
+	virtual shared_ptr<Car> create() = 0;
+};
+
+
+class CarDirector : public CarFactory
+{
+public:
+	CarDirector(shared_ptr<CarBuilder> builder) : br(builder) {}
+
+	shared_ptr<Car> create() override
+	{
+		if (br->buildEngine() && br->buildChassis()) return br->getCar();
+
+		return nullptr;
+	}
+
+private:
+	shared_ptr<CarBuilder> br;
+};
 ```
 {% endcode %}
 {% endtab %}

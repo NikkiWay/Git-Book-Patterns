@@ -6,8 +6,6 @@ description: Abstract factory
 
 ## Абстрактная фабрика с использованием генерации иерархии классов
 
-
-
 {% tabs %}
 {% tab title="Type List" %}
 {% code fullWidth="true" %}
@@ -277,41 +275,8 @@ public:
 };
 
 BaseGraphics::~BaseGraphics() {}
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="BasePen" %}
-{% code fullWidth="true" %}
-```cpp
-class BasePen
-{
-public:	
-    virtual ~BasePen() = 0;
-};
 
-BasePen::~BasePen() {}
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="BaseBrush" %}
-{% code fullWidth="true" %}
-```cpp
-class BaseBrush
-{
-public:	
-    virtual ~BaseBrush() = 0;
-};
-
-BaseBrush::~BaseBrush() {}
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="QtGraphics" %}
-{% code fullWidth="true" %}
-```cpp
 class QtGraphics : public BaseGraphics
 {
 public:
@@ -329,17 +294,35 @@ public:
 {% endcode %}
 {% endtab %}
 
-{% tab title="QtPen" %}
+{% tab title="BasePen" %}
 {% code fullWidth="true" %}
 ```cpp
+class BasePen
+{
+public:	
+    virtual ~BasePen() = 0;
+};
+
+BasePen::~BasePen() {}
+
+
 class QtPen : public BasePen {};
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="QtBrush" %}
+{% tab title="BaseBrush" %}
 {% code fullWidth="true" %}
 ```cpp
+class BaseBrush
+{
+public:	
+    virtual ~BaseBrush() = 0;
+};
+
+BaseBrush::~BaseBrush() {}
+
+
 class QtBrush : public BaseBrush {};
 ```
 {% endcode %}

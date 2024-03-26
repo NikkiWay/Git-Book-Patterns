@@ -271,6 +271,18 @@ public:
     unique_ptr<Base> clone() const;
     virtual ostream& print(ostream& os) const = 0;
 };
+
+
+unique_ptr<Base> Base::clone() const
+{
+    return dynamic_cast<const BaseCloner*>(this)->doClone();
+}
+
+
+ostream& operator <<(ostream& os, const unique_ptr<Base>& obj)
+{
+    return obj->print(os);
+}
 ```
 {% endcode %}
 {% endtab %}
@@ -332,28 +344,6 @@ public:
         return os << "serialNum = " << serialNum;
     }
 };
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="clone()" %}
-{% code fullWidth="true" %}
-```cpp
-unique_ptr<Base> Base::clone() const
-{
-    return dynamic_cast<const BaseCloner*>(this)->doClone();
-}
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="operator <<" %}
-{% code fullWidth="true" %}
-```cpp
-ostream& operator <<(ostream& os, const unique_ptr<Base>& obj)
-{
-    return obj->print(os);
-}
 ```
 {% endcode %}
 {% endtab %}

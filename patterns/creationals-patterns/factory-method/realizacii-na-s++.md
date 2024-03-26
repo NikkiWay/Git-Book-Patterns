@@ -16,13 +16,8 @@ public:
     virtual ~Car() = default;
     virtual void drive() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Sedan" %}
-{% code fullWidth="true" %}
-```cpp
+
 class Sedan : public Car
 {
 public:
@@ -41,13 +36,7 @@ public:
         cout << "Driving sedan" << endl; 
     }
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="SUV" %}
-{% code fullWidth="true" %}
-```cpp
 class SUV : public Car 
 {
 public:
@@ -91,13 +80,8 @@ public:
     virtual ~CarFactory() = default;
     virtual unique_ptr<Car> createCar() = 0;
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="ConcreteCarFactory" %}
-{% code fullWidth="true" %}
-```cpp
+
 template <Derivative<Car> TCar>
 requires NotAbstract<TCar>
 class ConcreteCarFactory : public CarFactory
@@ -228,7 +212,7 @@ int main()
     try
     {
         shared_ptr<VehicleSolution> solution
-        CarFactoryMaker::createCarFactory<Sedan>} });
+        = make_solution({ {1, CarFactoryMaker::createCarFactory<Sedan>} });
 
         if (!solution->registration(2, CarFactoryMaker::createCarFactory<SUV>))
         {
