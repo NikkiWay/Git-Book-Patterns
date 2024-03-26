@@ -345,13 +345,8 @@ public:
     requires Derivative<TCar, Car>
     void use(shared_ptr<CarFactory<TCar>> factory);
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Method User" %}
-{% code fullWidth="true" %}
-```cpp
+
 template<NotAbstract TCar>
 requires Derivative<TCar, Car>
 void User::use(shared_ptr<CarFactory<TCar>> factory)
