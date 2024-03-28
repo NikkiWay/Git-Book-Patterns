@@ -64,19 +64,19 @@ concept NotAbstract = !is_abstract_v<Type>;
 ```
 {% endtab %}
 
-{% tab title="CarFactory" %}
+{% tab title="CarCreator" %}
 {% code fullWidth="true" %}
 ```cpp
-class CarFactory
+class CarCreator
 {
 public:
-    virtual ~CarFactory() = default;
+    virtual ~CarCreator() = default;
     virtual unique_ptr<Car> create() = 0;
 };
 
 template <Derivative<Car> TCar>
 requires NotAbstract<TCar>
-class ConcreteCarFactory : public CarFactory
+class ConcreteCarCreator : public CarCreator
 {
 public:
     unique_ptr<Car> create() override
@@ -94,9 +94,9 @@ public:
 class User
 {
 public:
-    void use(shared_ptr<CarFactory>& factory)
+    void use(shared_ptr<CarCreator>& creator)
     {
-        shared_ptr<Car> car = factory->create();
+        shared_ptr<Car> car = creator->create();
         car->drive();
     }
 };
@@ -114,9 +114,9 @@ using namespace std;
 
 int main()
 {
-	shared_ptr<CarFactory> factory = make_shared<ConcreteCarFactory<Sedan>>();
+	shared_ptr<CarCreator> creator = make_shared<ConcreteCarCreator<Sedan>>();
 	
-	User{}.use(factory);
+	User{}.use(creator);
 }
 ```
 {% endcode %}
@@ -177,13 +177,13 @@ concept NotAbstract = !is_abstract_v<Type>;
 {% endcode %}
 {% endtab %}
 
-{% tab title="CarFactory" %}
+{% tab title="CarCreator" %}
 {% code fullWidth="true" %}
 ```cpp
-class CarFactory
+class CarCreator
 {
 public:
-    virtual ~CarFactory() = default;
+    virtual ~CarCreator() = default;
 
     shared_ptr<Car> getCar();
 
@@ -197,7 +197,7 @@ private:
 
 template <Derivative<Car> TCar>
 requires NotAbstract<TCar>
-class ConcreteCarFactory : public CarFactory
+class ConcreteCarCreator : public CarCreator
 {
 protected:
     shared_ptr<Car> createCar() override
@@ -209,12 +209,12 @@ protected:
 {% endcode %}
 {% endtab %}
 
-{% tab title="Method CarFactory" %}
+{% tab title="Method CarCreator" %}
 {% code fullWidth="true" %}
 ```cpp
-# pragma region Method CarFactory
+# pragma region Method CarCreator
 
-shared_ptr<Car> CarFactory::getCar()
+shared_ptr<Car> CarCreator::getCar()
 {
     if (!car)
     {
@@ -235,10 +235,10 @@ shared_ptr<Car> CarFactory::getCar()
 class User
 {
 public:
-    void use(shared_ptr<CarFactory>& factory)
+    void use(shared_ptr<CarCreator>& creator)
     {
-        shared_ptr<Car> car1 = factory->getCar();
-        shared_ptr<Car> car2 = factory->getCar();
+        shared_ptr<Car> car1 = creator->getCar();
+        shared_ptr<Car> car2 = creator->getCar();
 
         cout << "use count = " << car1.use_count() << endl;
         car1->drive();
@@ -258,17 +258,17 @@ using namespace std;
 
 int main()
 {
-    shared_ptr<CarFactory> factory = make_shared<ConcreteCarFactory<Sedan>>();
+    shared_ptr<CarCreator> creator = make_shared<ConcreteCarCreator<Sedan>>();
 
     unique_ptr<User> user = make_unique<User>();
-    user->use(factory);
+    user->use(creator);
 
     return 0;
 }
 ```
 {% endcode %}
 
-## Фабричный метод с шаблонным CarFactory
+## Фабричный метод с шаблонным CarCreator
 
 В данном случае задан один единственный CarFactory, он является шаблонным, что позволяет избавиться от необходимости создания конкретных креаторов ([Creator](./#uml-diagramma)) для каждого типа объекта.
 
@@ -318,12 +318,12 @@ concept NotAbstract = !is_abstract_v<Type>;
 ```
 {% endtab %}
 
-{% tab title="CarFactory" %}
+{% tab title="CarCreator" %}
 {% code fullWidth="true" %}
 ```cpp
 template <Derivative<Car> TCar>
 requires NotAbstract<TCar>
-class CarFactory
+class CarCreator
 {
 public:
     unique_ptr<Car> create()
@@ -343,15 +343,15 @@ class User
 public:
     template<NotAbstract TCar>
     requires Derivative<TCar, Car>
-    void use(shared_ptr<CarFactory<TCar>> factory);
+    void use(shared_ptr<CarCreator<TCar>> creator);
 };
 
 
 template<NotAbstract TCar>
 requires Derivative<TCar, Car>
-void User::use(shared_ptr<CarFactory<TCar>> factory)
+void User::use(shared_ptr<CarCreator<TCar>> creator)
 {
-    shared_ptr<Car> car = factory->create();
+    shared_ptr<Car> car = creator->create();
     car->drive();
 }
 ```
@@ -368,12 +368,12 @@ using namespace std;
 
 int main()
 {
-	using SedanFactory_t = CarFactory<Sedan>;
-  	shared_ptr<SedanFactory_t> sedanFactory = make_shared<SedanFactory_t>();
+	using SedanCreator_t = CarCreator<Sedan>;
+  	shared_ptr<SedanCreator_t> sedanCreator = make_shared<SedanCreator_t>();
 
 	unique_ptr<User> user = make_unique<User>();
 	
-	user->use(sedanFactory);
+	user->use(sedanCreator);
 }
 ```
 {% endcode %}
@@ -486,21 +486,21 @@ concept Constructible = is_constructible_v<Type, Args...>;
 {% endcode %}
 {% endtab %}
 
-{% tab title="BaseFactory" %}
+{% tab title="BaseCreator" %}
 {% code fullWidth="true" %}
 ```cpp
 template <Abstract Tbase, typename... Args>
-class BaseFactory
+class BaseCreator
 {
 public:
-    virtual ~BaseFactory() = default;
+    virtual ~BaseCreator() = default;
     virtual unique_ptr<Tbase> create(Args&& ...args) = 0;
 };
 
 
 template <typename Tbase, typename Tprod, typename... Args>
 requires NotAbstract<Tprod>&& Derivative<Tprod, Tbase>&& Constructible<Tprod, Args...>
-class Factory : public BaseFactory<Tbase, Args...>
+class Creator : public BaseCreator<Tbase, Args...>
 {
 public:
     unique_ptr<Tbase> create(Args&& ...args) override
@@ -515,14 +515,14 @@ public:
 {% tab title="User" %}
 {% code fullWidth="true" %}
 ```cpp
-using BaseCarFactory_t = BaseFactory<Car, int, double>;
+using BaseCarCreator_t = BaseCreator<Car, int, double>;
 
 class User
 {
 public:
-    void use(shared_ptr<BaseCarFactory_t>& factory)
+    void use(shared_ptr<BaseCarCreator_t>& creator)
     {
-        shared_ptr<Car> car = factory->create(1, 100.);
+        shared_ptr<Car> car = creator->create(1, 100.);
         car->drive();
     }
 };
@@ -540,9 +540,9 @@ using namespace std;
 
 int main()
 {
-    shared_ptr<BaseCarFactory_t> factory = make_shared<Factory<Car, Sedan, int, double>>();
+    shared_ptr<BaseCarCreator_t> creator = make_shared<Creator<Car, Sedan, int, double>>();
     unique_ptr<User> user = make_unique<User>();
-    user->use(factory);
+    user->use(creator);
 }
 ```
 {% endcode %}
@@ -601,11 +601,11 @@ concept NotAbstract = !is_abstract_v<Type>;
 ```
 {% endtab %}
 
-{% tab title="Factory" %}
+{% tab title="Creator" %}
 {% code fullWidth="true" %}
 ```cpp
 template <typename Tcrt>
-class Factory
+class Creator
 {
 public:
     auto create() const
@@ -617,7 +617,7 @@ public:
 
 template <Derivative<Car> TCar>
 requires NotAbstract<TCar>
-class CarFactory : public Factory<CarFactory<TCar>>
+class CarCreator : public Creator<CarCreator<TCar>>
 {
 public:
     unique_ptr<Car> create_impl() const
@@ -636,9 +636,9 @@ class User
 {
 public:
     template<Derivative<Car> TCar>
-    void use(Factory<CarFactory<TCar>>& factory) requires NotAbstract<TCar>
+    void use(Creator<CarCreator<TCar>>& creator) requires NotAbstract<TCar>
     {
-        auto car = factory.create();
+        auto car = creator.create();
         car->drive();
     }
 };
@@ -656,8 +656,8 @@ using namespace std;
 
 int main()
 {
-    Factory<CarFactory<Sedan>> factory;
-    User{}.use(factory);
+    Factory<CarCreator<Sedan>> creator;
+    User{}.use(creator);
 }
 ```
 {% endcode %}
