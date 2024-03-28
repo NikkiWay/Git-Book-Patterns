@@ -397,13 +397,13 @@ struct Cloner : public Base
 
     unique_ptr<Derived> clone() const
     {
-        return unique_ptr<Derived>(dynamic_cast<Derived*>(this->doClone()));
+        return unique_ptr<Derived>(static_cast<Derived*>(this->doClone()));
     }
 
 protected:
     virtual Cloner* doClone() const
     {
-        return new Derived(*(Derived*)this);
+        return new Derived(*static_cast<const Derived*>(this));
     }
 };
 ```
