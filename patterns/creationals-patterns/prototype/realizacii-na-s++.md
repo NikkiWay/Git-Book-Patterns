@@ -51,7 +51,7 @@ public:
 class User
 {
 public:
-	void use(shared_ptr<Car>&car)
+	void use(shared_ptr<Car> &car)
 	{
 		auto newCar = car->clone();
 	}

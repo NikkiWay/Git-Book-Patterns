@@ -54,7 +54,7 @@ public:
 	shared_ptr<Car> getCar();
 
 protected:
-	virtual shared_ptr<Car> createCar() = 0;
+	virtual shared_ptr<Car> create() = 0;
 
 	shared_ptr<Car> car{ nullptr };
 	size_t part{ 0 };
@@ -86,7 +86,7 @@ public:
 	}
 
 protected:
-	shared_ptr<Product> createCar() override;
+	shared_ptr<Car> create() override;
 };
 ```
 {% endcode %}
@@ -95,38 +95,35 @@ protected:
 {% tab title="Methods" %}
 {% code fullWidth="true" %}
 ```cpp
-# pragma region Methods
 shared_ptr<Car> CarBuilder::getCar()
 {
-	if (!car) { car = createCar(); }
+	if (!car) { car = create(); }
 
 	return car;
 }
 
-shared_ptr<Car> SedanBuilder::createCar()
+shared_ptr<Car> SedanBuilder::create()
 {
 	if (part == 2) { car = make_shared<Sedan>(); }
 
 	return car;
 }
-
-# pragma endregion
 ```
 {% endcode %}
 {% endtab %}
 
-{% tab title="CarFactory" %}
+{% tab title="CarCreator" %}
 {% code fullWidth="true" %}
 ```cpp
-class CarFactory
+class CarCreator
 {
 public:
-	virtual ~CarFactory() = default;
+	virtual ~CarCreator() = default;
 	virtual shared_ptr<Car> create() = 0;
 };
 
 
-class CarDirector : public CarFactory
+class CarDirector : public CarCreator
 {
 public:
 	CarDirector(shared_ptr<CarBuilder> builder) : br(builder) {}
@@ -151,9 +148,9 @@ private:
 class User
 {
 public:
-	void use(shared_ptr<CarFactory>& factory)
+	void use(shared_ptr<CarCreator>& creator)
 	{
-		shared_ptr<Car> car = factory->create();
+		shared_ptr<Car> car = creator->create();
 
 		if (car)
 			car->drive();
@@ -174,9 +171,9 @@ using namespace std;
 int main()
 {
 	shared_ptr<CarBuilder> builder = make_shared<SedanBuilder>();
-	shared_ptr<CarFactory> factory = make_shared<CarDirector>(builder);
+	shared_ptr<CarCreator> creator = make_shared<CarDirector>(builder);
 
-	User{}.use(factory);
+	User{}.use(creator);
 }
 ```
 {% endcode %}
