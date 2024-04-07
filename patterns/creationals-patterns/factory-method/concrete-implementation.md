@@ -71,7 +71,7 @@ class CarCreator
 {
 public:
     virtual ~CarCreator() = default;
-    virtual unique_ptr<Car> create() = 0;
+    virtual unique_ptr<Car> create() const = 0;
 };
 
 template <Derivative<Car> TCar>
@@ -79,7 +79,7 @@ requires NotAbstract<TCar>
 class ConcreteCarCreator : public CarCreator
 {
 public:
-    unique_ptr<Car> create() override
+    unique_ptr<Car> create() const override
     {
         return make_unique<TCar>();
     }
@@ -94,7 +94,7 @@ public:
 class User
 {
 public:
-    void use(shared_ptr<CarCreator>& creator)
+    void use(const shared_ptr<CarCreator>& creator)
     {
         shared_ptr<Car> car = creator->create();
         car->drive();
@@ -123,11 +123,11 @@ int main()
 
 ## Фабричный метод без повторного создания объектов. Идиома NVI (Non-Virtual Interface).
 
-Задан базовый абстрактный класс CarFactory с public методом getCar(), protected виртуальным методом createCar() и приватным полем car.
+Задан базовый абстрактный класс CarCreator с public методом getCar(), protected виртуальным методом createCar() и приватным полем car.
 
 Метод getCar() создает Car, если он уже не создан и возвращает поле car.
 
-Неабстрактный класс ConcreteCarFactory наследуется от CarFactory и определяет метод createCar(), для создания конкретного объекта.
+Неабстрактный класс ConcreteCarCreator наследуется от CarCreator и определяет метод createCar(), для создания конкретного объекта.
 
 Фабричный метод с использованием идиомы NVI применяется в случаях множественного использования тяжелого (тяжело создаваемого) объекта, при отсутствии необходимости в нескольких объектов данного типа.
 
@@ -188,7 +188,7 @@ public:
     shared_ptr<Car> getCar();
 
 protected:
-    virtual shared_ptr<Car> createCar() = 0;
+    virtual shared_ptr<Car> create() = 0;
 
 private:
     shared_ptr<Car> car{ nullptr };
@@ -200,7 +200,7 @@ requires NotAbstract<TCar>
 class ConcreteCarCreator : public CarCreator
 {
 protected:
-    shared_ptr<Car> createCar() override
+    shared_ptr<Car> create() override
     {
         return make_shared<TCar>();
     }
@@ -212,19 +212,15 @@ protected:
 {% tab title="Method CarCreator" %}
 {% code fullWidth="true" %}
 ```cpp
-# pragma region Method CarCreator
-
 shared_ptr<Car> CarCreator::getCar()
 {
     if (!car)
     {
-        car = createCar();
+        car = create();
     }
 
     return car;
 }
-
-# pragma endregion
 ```
 {% endcode %}
 {% endtab %}
@@ -270,7 +266,7 @@ int main()
 
 ## Фабричный метод с шаблонным CarCreator
 
-В данном случае задан один единственный CarFactory, он является шаблонным, что позволяет избавиться от необходимости создания конкретных креаторов ([Creator](./#uml-diagramma)) для каждого типа объекта.
+В данном случае задан один единственный CarCreator, он является шаблонным, что позволяет избавиться от необходимости создания конкретных креаторов ([Creator](./#uml-diagramma)) для каждого типа объекта.
 
 При данном подходе решение о создании объекта переносится на стадию компиляции и от этого выполнение происходит быстрее, но при добавлении новых типов объектов придется перекомпилировать всю кодовую базу, содержащую данный креатор.
 
@@ -378,11 +374,7 @@ int main()
 ```
 {% endcode %}
 
-## Фабричный метод с шаблонным базовым классом Factory
-
-BaseFactory - абстрактный базовый класс создаваемых объектов продуктов (в нашем случае Car), от которого наследуется конкретный шаблонный Factory. Параметр шаблона Tbase - это абстрактный базовый класс иерархии классов продуктов.
-
-Идея в создании базового абстрактного шаблонного класса BaseFactory, принимающего абстрактный класс, заключается в возможности не создавать для каждой иерархии продуктов свой базовый класс Factory.
+## Фабричный метод со статическим шаблонным методом create
 
 {% tabs %}
 {% tab title="Car" %}
@@ -403,7 +395,120 @@ private:
 	double weight;
 	
 public:
-    Sedan(int seats_t, double weight_t) : seats(c), weight(p)
+    Sedan(int s, double w) : seats(s), weight(w)
+    { 
+        cout << "Sedan constructor called" << endl; 
+    }
+    
+    ~Sedan() override 
+    { 
+        cout << "Sedan destructor called" << endl; 
+    }
+
+    void drive() override 
+    { 
+        cout << "Driving sedan" << endl; 
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Concepts" %}
+{% code fullWidth="true" %}
+```cpp
+template <typename Derived, typename Base>
+concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
+
+template <typename Type>
+concept NotAbstract = !is_abstract_v<Type>;
+
+template<typename Type, typename... Args>
+concept Constructible = is_constructible_v<Type, Args...>;
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="CarCreator" %}
+{% code fullWidth="true" %}
+```cpp
+class CarCreator
+{
+public:
+	template <Derivative<Car> TCar, typename... Args>
+	requires NotAbstract<TCar> && Constructible<TCar, Args...>
+	static unique_ptr<Car> create(Args&& ...args) 
+	{
+		return make_unique<TCar>(forward<Args>(args)...);
+	}
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+class User
+{
+public:
+
+    template<NotAbstract TCar, typename... Args>
+    void use(Args&& ...args) requires Derivative<TCar, Car>
+    {
+        shared_ptr<Car> ptr = CarCreator::create<TCar>(forward<Args>(args)...);
+        
+        ptr->drive();
+    }
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+{% code fullWidth="true" %}
+```cpp
+# include <iostream>
+# include <memory>
+# include <concepts>
+
+using namespace std;
+
+int main()
+{
+	unique_ptr<User> us = make_unique<User>();
+
+	us->use<Sedan>(1, 100.);
+}
+```
+{% endcode %}
+
+## Фабричный метод с шаблонным базовым классом Creator
+
+BaseCreator - абстрактный базовый класс создаваемых объектов продуктов (в нашем случае Car), от которого наследуется конкретный шаблонный Creator. Параметр шаблона Tbase - это абстрактный базовый класс иерархии классов продуктов.
+
+Идея в создании базового абстрактного шаблонного класса BaseCreator, принимающего абстрактный класс, заключается в возможности не создавать для каждой иерархии продуктов свой базовый класс Creator.
+
+{% tabs %}
+{% tab title="Car" %}
+{% code fullWidth="true" %}
+```cpp
+class Car
+{
+public:
+    virtual ~Car() = default;
+    virtual void drive() = 0;
+};
+
+
+class Sedan : public Car
+{
+private:
+	int seats;
+	double weight;
+	
+public:
+    Sedan(int s, double w) : seats(s), weight(w)
     { 
         cout << "Sedan constructor called" << endl; 
     }
@@ -423,7 +528,7 @@ public:
 class SUV : public Car 
 {
 public:
-    SUV(int seats_t, double weight_t) 
+    SUV(int s, double w) 
     {
         cout << "Calling the SUV constructor;" << endl;
     }
@@ -458,7 +563,6 @@ concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
 {% tab title="Constructible" %}
 {% code fullWidth="true" %}
 ```cpp
-# pragma region Variants of the concept Constructible
 # define V_1
 
 # ifdef V_1
@@ -480,8 +584,6 @@ template<typename Type, typename... Args>
 concept Constructible = is_constructible_v<Type, Args...>;
 
 # endif 
-
-# pragma endregion
 ```
 {% endcode %}
 {% endtab %}
@@ -494,7 +596,7 @@ class BaseCreator
 {
 public:
     virtual ~BaseCreator() = default;
-    virtual unique_ptr<Tbase> create(Args&& ...args) = 0;
+    virtual unique_ptr<Tbase> create(Args&& ...args) const = 0;
 };
 
 
@@ -503,7 +605,7 @@ requires NotAbstract<Tprod>&& Derivative<Tprod, Tbase>&& Constructible<Tprod, Ar
 class Creator : public BaseCreator<Tbase, Args...>
 {
 public:
-    unique_ptr<Tbase> create(Args&& ...args) override
+    unique_ptr<Tbase> create(Args&& ...args) const override
     {
         return make_unique<Tprod>(forward<Args>(args)...);
     }
@@ -520,7 +622,7 @@ using BaseCarCreator_t = BaseCreator<Car, int, double>;
 class User
 {
 public:
-    void use(shared_ptr<BaseCarCreator_t>& creator)
+    void use(const shared_ptr<BaseCarCreator_t>& creator)
     {
         shared_ptr<Car> car = creator->create(1, 100.);
         car->drive();
@@ -538,9 +640,11 @@ public:
 
 using namespace std;
 
+using SedanCreator_t = Creator<Car, Sedan, int, double>;
+
 int main()
 {
-    shared_ptr<BaseCarCreator_t> creator = make_shared<Creator<Car, Sedan, int, double>>();
+    shared_ptr<BaseCarCreator_t> creator = make_shared<SedanCreator_t>();
     unique_ptr<User> user = make_unique<User>();
     user->use(creator);
 }
@@ -553,7 +657,7 @@ int main()
 Статический полиморфизм (compile-time polymorphism) - это механизм, который позволяет вызывать различные функции или методы с одним и тем же именем, но с разными параметрами или типами данных. Это достигается с помощью перегрузки функций или методов. Компилятор статически выбирает соответствующую функцию или метод на основе типов параметров, указанных при вызове.
 {% endhint %}
 
-Задан базовый шаблонный класс Factory (он же [Creator](./#uml-diagramma)), который имеет метод create(). В методе происходит приведение объекта класса к типу, задаваемым параметром шаблона Tcrt, и вызывается метод по созданию объекта (create\_impl). Любой креатор, который будет использован для создания базового Factory должен иметь данную функцию по созданию конкретного объекта.
+Задан базовый шаблонный класс Creator, который имеет метод create(). В методе происходит приведение объекта класса к типу, задаваемым параметром шаблона Tcrt, и вызывается метод по созданию объекта (create\_impl). Любой креатор, который будет использован для создания базового Creator должен иметь данную функцию по созданию конкретного объекта.
 
 Подход дает большую гибкость для расширения типов креаторов, не меняя написанного кода. Также содержит все плюсы и минусы шаблонных классов.
 
@@ -636,7 +740,7 @@ class User
 {
 public:
     template<Derivative<Car> TCar>
-    void use(Creator<CarCreator<TCar>>& creator) requires NotAbstract<TCar>
+    void use(const Creator<CarCreator<TCar>>& creator) requires NotAbstract<TCar>
     {
         auto car = creator.create();
         car->drive();
@@ -656,8 +760,138 @@ using namespace std;
 
 int main()
 {
-    Factory<CarCreator<Sedan>> creator;
+    Creator<CarCreator<Sedan>> creator;
     User{}.use(creator);
+}
+```
+{% endcode %}
+
+## Фабричный метод с использованием идиомы «стирание типа» (Type erasure)
+
+{% tabs %}
+{% tab title="Concepts" %}
+{% code fullWidth="true" %}
+```cpp
+template <typename Derived, typename Base>
+concept Derivative = is_abstract_v<Base> && is_base_of_v<Base, Derived>;
+
+template <typename Type>
+concept NotAbstract = !is_abstract_v<Type>;
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Type2Type" %}
+{% code fullWidth="true" %}
+```cpp
+template < typename T>
+class Type2Type
+{
+public:
+	using type = T;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Car" %}
+{% code fullWidth="true" %}
+```cpp
+class Car
+{
+public:
+	virtual ~Car() = default;
+	virtual void drive() = 0;
+};
+
+class Sedan : public Car
+{
+public:
+	Sedan()
+	{
+		cout << "Sedan constructor called" << endl;
+	}
+
+	~Sedan() override
+	{
+		cout << "Sedan destructor called" << endl;
+	}
+
+	void drive() override
+	{
+		cout << "Driving sedan" << endl;
+	}
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="CarCreator" %}
+{% code fullWidth="true" %}
+```cpp
+class CarCreator
+{
+public:
+	template <Derivative<Car> TCar>
+	requires NotAbstract<TCar>
+	CarCreator(Type2Type<TCar>)
+	{
+		ptrmethod = &CarCreator::doCreate<TCar>;		
+	}
+
+	unique_ptr<Car> create()
+	{
+		return (this->*ptrmethod)();
+	}
+
+private:
+	template <typename TCar>
+	unique_ptr<Car> doCreate()
+	{
+		return make_unique<TCar>();
+	}
+
+	using Prtmethod_t = unique_ptr<Car>(CarCreator::*)();
+
+	Prtmethod_t ptrmethod;
+};
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="User" %}
+{% code fullWidth="true" %}
+```cpp
+class User
+{
+public:
+	void use(shared_ptr<CarCreator>& creator)
+	{
+		shared_ptr<Car> ptr = creator->create();
+
+		ptr->drive();
+	}
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+{% code fullWidth="true" %}
+```cpp
+# include <iostream>
+# include <memory>
+# include <concepts>
+
+using namespace std;
+
+int main()
+{
+	shared_ptr<CarCreator> creator = make_shared<CarCreator>(Type2Type<Sedan>());
+
+	unique_ptr<User> user = make_unique<User>();
+
+	user->use(creator);
 }
 ```
 {% endcode %}

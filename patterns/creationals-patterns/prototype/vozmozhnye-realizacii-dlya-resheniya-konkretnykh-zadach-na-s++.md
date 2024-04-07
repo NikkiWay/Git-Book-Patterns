@@ -73,7 +73,7 @@ unique_ptr<Car> Car::clone()
 class User
 {
 public:
-	void use(shared_ptr<Car>& car)
+	void use(shared_ptr<Car> &car)
 	{
 		auto newCar = car->clone();
 	}
@@ -139,13 +139,8 @@ public:
         return make_unique<Derived>(static_cast<const Derived&>(*this));
     }
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Cloner in C++23" %}
-{% code fullWidth="true" %}
-```cpp
+// Cloner C++23
 template <typename Base>
 struct Cloner : public Base
 {
@@ -188,20 +183,15 @@ public:
         return os << "serialNum = " << serialNum;
     }
 };
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="Car in C++23" %}
-{% code fullWidth="true" %}
-```cpp
+// Car in C++23
 class Car : public Cloner<Base>
 {
 private:
     int serialNum;
 
 public:
-    Base(int d) : serialNum(d) {}
+    Car(int d) : serialNum(d) {}
 
     ostream& print(ostream& os) const override
     {
@@ -212,20 +202,14 @@ public:
 {% endcode %}
 {% endtab %}
 
-{% tab title="operator <<" %}
+{% tab title="User" %}
 {% code fullWidth="true" %}
 ```cpp
 ostream& operator <<(ostream& os, const unique_ptr<Base>& obj)
 {
     return obj->print(os);
 }
-```
-{% endcode %}
-{% endtab %}
 
-{% tab title="User" %}
-{% code fullWidth="true" %}
-```cpp
 class User
 {
 public:

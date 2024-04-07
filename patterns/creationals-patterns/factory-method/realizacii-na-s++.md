@@ -78,7 +78,7 @@ class CarCreator
 {
 public:
     virtual ~CarCreator() = default;
-    virtual unique_ptr<Car> createCar() = 0;
+    virtual unique_ptr<Car> createCar() const = 0;
 };
 
 
@@ -87,7 +87,7 @@ requires NotAbstract<TCar>
 class ConcreteCarCreator : public CarCreator
 {
 public:
-    unique_ptr<Car> createCar() override 
+    unique_ptr<Car> createCar() const override 
     {
         return make_unique<TCar>();
     }
@@ -119,7 +119,7 @@ public:
 class User
 {
 public:
-    void use(shared_ptr<CarCreator>& creator)
+    void use(const shared_ptr<CarCreator>& creator)
     {
         if (!creator) throw runtime_error("The creator is missing!");
 
@@ -150,7 +150,7 @@ public:
     VehicleSolution() = default;
     VehicleSolution(initializer_list<pair<size_t, CreateCarCreator>> list);
 
-    bool registration(size_t id, CreateCarCreator createfun);
+    bool registrate(size_t id, CreateCarCreator createfun);
     bool check(size_t id) 
     { 
         return callbacks.erase(id) == 1; 
@@ -172,10 +172,10 @@ private:
 VehicleSolution::VehicleSolution(initializer_list<pair<size_t, CreateCarCreator>> list)
 {
     for (auto&& elem : list)
-        this->registration(elem.first, elem.second);
+        this->registrate(elem.first, elem.second);
 }
 
-bool VehicleSolution::registration(size_t id, CreateCarCreator createfun)
+bool VehicleSolution::registrate(size_t id, CreateCarCreator createfun)
 {
     return callbacks.insert(CallBackMap::value_type(id, createfun)).second;
 }
@@ -187,7 +187,10 @@ unique_ptr<CarCreator> VehicleSolution::create(size_t id)
     return it != callbacks.end() ? unique_ptr<CarCreator>(it->second()) : nullptr;
 }
 
-shared_ptr<VehicleSolution> make_solution(initializer_list<pair<size_t, VehicleSolution::CreateCarCreator>> list)
+shared_ptr<VehicleSolution> make_solution(
+    initializer_list<pair<size_t, 
+    VehicleSolution::CreateCarCreator>> list
+)
 {
     return shared_ptr<VehicleSolution>(new VehicleSolution(list));
 }
@@ -214,7 +217,7 @@ int main()
         shared_ptr<VehicleSolution> solution
         = make_solution({ {1, CarCreatorMaker::createCarCreator<Sedan>} });
 
-        if (!solution->registration(2, CarCreatorMaker::createCarCreator<SUV>))
+        if (!solution->registrate(2, CarCreatorMaker::createCarCreator<SUV>))
         {
             throw runtime_error("Error registration!");
         }
