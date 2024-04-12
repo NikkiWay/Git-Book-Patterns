@@ -90,7 +90,6 @@ struct Reverse<TypeList<Head, Tail...>>
 {% tab title="Scatter Hierarchy" %}
 {% code fullWidth="true" %}
 ```cpp
-# pragma region Scatter Hierarchy
 template <typename TList, template <typename> typename Unit>
 class ScatterHierarchy;
 
@@ -113,8 +112,6 @@ public:
 	using LeftBase = ScatterHierarchy<TypeList<Head>, Unit>;
 	using RightBase = ScatterHierarchy<TypeList<Tail...>, Unit>;
 };
-
-# pragma endregion
 ```
 {% endcode %}
 {% endtab %}
@@ -122,7 +119,6 @@ public:
 {% tab title="Linear Hierarchy" %}
 {% code fullWidth="true" %}
 ```cpp
-# pragma region Linear Hierarchy
 struct EmptyType {};
 
 template
@@ -152,8 +148,6 @@ template
 class LinearHierarchy<TypeList<Head>, Unit, Root>
 	: public Unit<Head, Root>
 {};
-
-# pragma endregion
 ```
 {% endcode %}
 {% endtab %}
